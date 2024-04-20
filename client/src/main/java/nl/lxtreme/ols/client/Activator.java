@@ -243,6 +243,9 @@ public class Activator extends DependencyActivatorBase
             .setService( Exporter.class ) //
             .setCallbacks( "addExporter", "removeExporter" ) //
             .setRequired( false ) ) //
+        .add( createServiceDependency() //
+            .setService( ConfigurationAdmin.class ) //
+            .setRequired( true ) ) //
         .add( createConfigurationDependency() //
             .setPid( UIManagerConfigurator.PID ) ) //
         );

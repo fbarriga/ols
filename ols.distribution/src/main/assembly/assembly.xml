@@ -14,9 +14,8 @@
 			<outputDirectory>bin</outputDirectory>
 			<includes>
 				<include>org.apache.felix:org.apache.felix.main</include>
-				<include>com.jgoodies:jgoodies-common</include>
-				<include>com.jgoodies:jgoodies-looks</include>
 				<include>nl.lxtreme.ols:runner</include>
+				<include>nl.lxtreme.ols:lib.flatlaf</include>
 			</includes>
 			<directoryMode>0755</directoryMode>
 			<fileMode>0644</fileMode>
@@ -35,6 +34,7 @@
 				<include>org.apache.felix:org.apache.felix.dependencymanager</include>
 				<include>nl.lxtreme.ols:lib.jserialcomm</include>
 				<include>nl.lxtreme.ols:lib.jvt220</include>
+				<include>nl.lxtreme.ols:lib.flatlaf</include><!-- Not happy including this in bin and plugins -->
 				<include>nl.lxtreme.ols:lib.mydoggy</include>
 				<include>nl.lxtreme.ols:api</include>
 				<include>nl.lxtreme.ols:client</include>

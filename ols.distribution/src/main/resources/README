@@ -25,7 +25,7 @@ The current OLS client supports the following hardware:
  - Logic Pirate;
  - Bus Pirate;
  - IRToy;
- - Arduino Generic Logic Analyzer (see [10]).
+ - Arduino Generic Logic Analyzer (see [9]).
 
 In fact, all SUMP-compatible devices can be supported by the OLS client. To 
 add support for non-listed devices only a so-called "device profile" needs to
@@ -77,9 +77,8 @@ License
 -------
 The OLS client itself is released under GPLv2, see the LICENSE file for the 
 complete license. The OLS client software makes use of the OSGi specification,
-which is licensed under "OSGi Specification License, Version 1.0" [7], Apache 
-Felix, which is licensed under "Apache License, Version 2.0" [8] and JGoodies, 
-licensed under "BSD open source license" [9]. 
+which is licensed under "OSGi Specification License, Version 1.0" [7], and Apache
+Felix, which is licensed under "Apache License, Version 2.0" [8].
 
 
 External links
@@ -97,5 +96,4 @@ External links
     the OLS hardware, with a subforum for the OLS client;
 [7] <http://www.osgi.org/Main/OSGiSpecificationLicense>;
 [8] <http://www.apache.org/licenses/LICENSE-2.0>;
-[9] <http://www.opensource.org/licenses/bsd-license.html>;
-[10] <https://github.com/gillham/logic_analyzer> by Andrew Gillham.
+[9] <https://github.com/gillham/logic_analyzer> by Andrew Gillham.

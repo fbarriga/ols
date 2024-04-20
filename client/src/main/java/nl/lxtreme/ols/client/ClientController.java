@@ -284,12 +284,15 @@ public final class ClientController implements ActionProvider, AcquisitionProgre
 
   private final ProgressUpdatingRunnable progressAccumulatingRunnable;
   private final AccumulatingRepaintingRunnable repaintAccumulatingRunnable;
+  private final UIThemeManager uiThemeManager;
 
   private volatile ProjectManager projectManager;
   private volatile DataAcquisitionService dataAcquisitionService;
   private volatile MainFrame mainFrame;
   private volatile HostProperties hostProperties;
   private volatile UIColorSchemeManager colorSchemeManager;
+  private volatile ConfigurationAdmin configAdmin;
+  private volatile Configuration config;
 
   private volatile long acquisitionStartTime;
 
@@ -300,15 +303,12 @@ public final class ClientController implements ActionProvider, AcquisitionProgre
    *
    * @param aBundleContext
    *          the bundle context to use for interaction with the OSGi framework;
-   * @param aHost
-   *          the current host to use, cannot be <code>null</code>;
-   * @param aProjectManager
-   *          the project manager to use, cannot be <code>null</code>.
    */
   public ClientController( final BundleContext aBundleContext )
   {
     this.bundleContext = aBundleContext;
 
+    this.uiThemeManager = new UIThemeManager();
     this.devices = new ConcurrentHashMap<String, Device>();
     this.tools = new ConcurrentHashMap<String, Tool<?>>();
     this.exporters = new ConcurrentHashMap<String, Exporter>();
@@ -484,7 +484,7 @@ public final class ClientController implements ActionProvider, AcquisitionProgre
   }
 
   /**
-   * @see nl.lxtreme.ols.client.IClientController#cancelCapture()
+   * @see nl.lxtreme.ols.client.ClientController#cancelCapture()
    */
   public void cancelCapture()
   {
@@ -1319,7 +1319,7 @@ public final class ClientController implements ActionProvider, AcquisitionProgre
    */
   public void showPreferencesDialog( final Window aParent )
   {
-    final PreferencesDialog dialog = new PreferencesDialog( aParent, this.colorSchemeManager );
+    final PreferencesDialog dialog = new PreferencesDialog( aParent, this.colorSchemeManager, this.uiThemeManager );
 
     final DependencyManager dm = new DependencyManager( this.bundleContext );
     final Component comp = dm.createComponent();
@@ -1357,11 +1357,13 @@ public final class ClientController implements ActionProvider, AcquisitionProgre
    * Called by the dependency manager when this component is about to be
    * started.
    */
-  public final void start()
+  public final void start() throws IOException
   {
     final HostProperties hostProperties = getHostProperties();
+    this.config = this.configAdmin.getConfiguration( UIManagerConfigurator.PID );
 
     initOSSpecifics( hostProperties.getVersion() );
+    uiThemeManager.initialize(config);
 
     // Make sure we're running on the EDT to ensure the Swing threading model is
     // correctly defined...
@@ -1888,9 +1890,6 @@ public final class ClientController implements ActionProvider, AcquisitionProgre
    *
    * @param aVersion
    *          the version of the application.
-   * @param aApplicationCallback
-   *          the application callback used to report application events on some
-   *          platforms (Mac OS), may be <code>null</code>.
    */
   private void initOSSpecifics( final String aVersion )
   {
@@ -1933,13 +1932,13 @@ public final class ClientController implements ActionProvider, AcquisitionProgre
     }
     else if ( hostInfo.isUnix() )
     {
+      JFrame.setDefaultLookAndFeelDecorated( true );
+      JDialog.setDefaultLookAndFeelDecorated( true );
       UIManager.put( "Application.useSystemFontSettings", Boolean.FALSE );
-      setLookAndFeel( "com.jgoodies.looks.plastic.Plastic3DLookAndFeel" );
     }
     else if ( hostInfo.isWindows() )
     {
       UIManager.put( "Application.useSystemFontSettings", Boolean.TRUE );
-      setLookAndFeel( "com.jgoodies.looks.plastic.PlasticXPLookAndFeel" );
     }
   }
 
@@ -1961,9 +1960,6 @@ public final class ClientController implements ActionProvider, AcquisitionProgre
     }
   }
 
-  /**
-   * @param aLookAndFeelClass
-   */
   private void setLookAndFeel( final String aLookAndFeelClassName )
   {
     final UIDefaults defaults = UIManager.getLookAndFeelDefaults();

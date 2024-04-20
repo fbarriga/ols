@@ -47,6 +47,10 @@
 		</dependency>
 		<dependency>
 			<groupId>nl.lxtreme.ols</groupId>
+			<artifactId>lib.flatlaf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>nl.lxtreme.ols</groupId>
 			<artifactId>test.util</artifactId>
 			<type>jar</type>
 			<scope>test</scope>

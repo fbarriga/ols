@@ -50,6 +50,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import nl.lxtreme.ols.util.HostInfo;
 import nl.lxtreme.ols.util.HostUtils;
 import nl.lxtreme.ols.util.swing.StandardActionFactory;
 import nl.lxtreme.ols.util.swing.StandardActionFactory.CloseAction.Closeable;

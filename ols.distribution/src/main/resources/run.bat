@@ -21,7 +21,6 @@ pause
 exit 1
 
 :setup
-set PLATFORMOPTS=-Dswing.defaultlaf=com.jgoodies.looks.plastic.PlasticXPLookAndFeel -DPlastic.defaultTheme=SkyBluer
 rem determine the location this script is run in...
 set BASEDIR=%~dp0
 rem all paths are used relatively from the base dir...
@@ -34,7 +33,7 @@ set SYSPROPS=-Djna.nosys=true
 set JDK_JAVA_OPTIONS=--add-opens java.desktop/javax.swing.plaf.basic=ALL-UNNAMED
 
 rem For now, use the "console enabled" java for Windows...
-java %PLATFORMOPTS% %MEMSETTINGS% %SYSPROPS% -cp "%CLASSPATH%" nl.lxtreme.ols.runner.Runner -pluginDir="%PLUGINDIR%" %*
+java %MEMSETTINGS% %SYSPROPS% -cp "%CLASSPATH%" nl.lxtreme.ols.runner.Runner -pluginDir="%PLUGINDIR%" %*
 
 :end
 exit 0

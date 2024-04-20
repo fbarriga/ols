@@ -453,10 +453,9 @@ public final class HostUtils implements HostInfo
   }
 
   /**
-   * Returns whether the current host's operating system is Linux or any other
-   * UNIX-like operating system, such as Solaris (SunOS).
+   * Returns whether the current host's operating system is Linux.
    *
-   * @return <code>true</code> if running on Linux or any other UNIX system,
+   * @return <code>true</code> if running on Linux.
    *         <code>false</code> otherwise.
    */
   public boolean isLinux()
@@ -531,7 +530,7 @@ public final class HostUtils implements HostInfo
   /**
    * {@inheritDoc}
    */
-  public final boolean needsExitMenuItem()
+  public boolean needsExitMenuItem()
   {
     return !isMacOS();
   }

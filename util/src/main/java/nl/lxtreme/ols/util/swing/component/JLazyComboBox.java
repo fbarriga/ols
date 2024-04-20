@@ -162,8 +162,8 @@ public class JLazyComboBox<T> extends JComboBox<T>
         }
 
         final HostInfo hostInfo = HostUtils.getHostInfo();
-        if ( hostInfo.isMacOS() ) {
-        } else {
+        if ( !hostInfo.isMacOS() )
+        {
           final BasicComboPopupProxy popup = (BasicComboPopupProxy) comp;
           final JScrollPane scrollPane = (JScrollPane) popup.getComponent(0);
 

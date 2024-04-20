@@ -160,10 +160,8 @@ public final class Runner
   /**
    * Creates a new {@link Runner} instance.
    *
-   * @throws IOException
    */
-  public Runner( final CmdLineOptions aOptions ) throws IOException
-  {
+  public Runner( final CmdLineOptions aOptions ) {
     this.options = aOptions;
   }
 
@@ -178,9 +176,20 @@ public final class Runner
    */
   public static void main( final String[] aArgs ) throws Exception
   {
+    setSystemProperties();
     Runner runner = new Runner( new CmdLineOptions( aArgs ) );
     runner.run();
     runner.waitForStop();
+  }
+
+  private static void setSystemProperties()
+  {
+    final String osName = System.getProperty( "os.name" );
+    if ( "Mac OS X".equalsIgnoreCase( osName ) || "Darwin".equalsIgnoreCase( osName ) ) {
+      System.setProperty("apple.awt.application.appearance", "system");
+      System.setProperty("apple.awt.application.name", "LogicSniffer");
+      System.setProperty("com.apple.mrj.application.apple.menu.about.name", "LogicSniffer");
+    }
   }
 
   /**

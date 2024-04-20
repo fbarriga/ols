@@ -26,6 +26,7 @@ import static nl.lxtreme.ols.util.swing.SpringLayoutUtils.*;
 import static nl.lxtreme.ols.util.swing.SwingComponentUtils.*;
 
 import java.awt.*;
+import java.awt.event.ItemEvent;
 import java.io.*;
 import java.util.*;
 
@@ -108,6 +109,80 @@ public class PreferencesDialog extends JDialog implements StatusAwareCloseableDi
   }
 
   /**
+   * Provides a custom combobox model for the current color schemes.
+   */
+  final class UIThemeModel extends AbstractListModel implements ComboBoxModel
+  {
+    // CONSTANTS
+
+    private static final long serialVersionUID = 1L;
+
+    // VARIABLES
+
+    private volatile int selected = -1;
+
+    private final UIManager.LookAndFeelInfo[] themes;
+
+    public UIThemeModel() {
+      super();
+      themes = UIManager.getInstalledLookAndFeels();
+    }
+
+    // METHODS
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getElementAt( final int aIndex )
+    {
+      if ( ( aIndex < 0 ) || ( aIndex >= themes.length ) )
+      {
+        return null;
+      }
+
+      return themes[aIndex].getName();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getSelectedItem()
+    {
+      return getElementAt( this.selected );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getSize()
+    {
+      return themes.length;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setSelectedItem( final Object aItem )
+    {
+      var item = (String) aItem;
+      for ( int i = 0; i < themes.length; ++i )
+      {
+        if ( themes[i].getName().equals(item) )
+        {
+          this.selected = i;
+          return;
+        }
+      }
+
+      this.selected = 0;
+    }
+  }
+
+  /**
    * Provides a combobox renderer for ColorScheme values.
    */
   static final class SignalAlignmentRenderer extends EnumItemRenderer<SignalAlignment>
@@ -141,6 +216,7 @@ public class PreferencesDialog extends JDialog implements StatusAwareCloseableDi
   // VARIABLES
 
   private final UIColorSchemeManager colorSchemeManager;
+  private final UIThemeManager uiThemeManager;
   private final JCheckBox mouseWheelZooms;
   private final JCheckBox cursorSnapToEdge;
   private final JCheckBox showGroupSummary;
@@ -149,9 +225,10 @@ public class PreferencesDialog extends JDialog implements StatusAwareCloseableDi
   private final JCheckBox showChannelIndexes;
   private final JCheckBox retainAnnotations;
   private final JCheckBox autoCenterCapture;
-  private final JComboBox annotationAlignment;
-  private final JComboBox signalAlignment;
+  private final JComboBox<SignalAlignment> annotationAlignment;
+  private final JComboBox<SignalAlignment> signalAlignment;
   private final JComboBox colorScheme;
+  private final JComboBox<UIThemeModel> uiTheme;
 
   private volatile boolean dialogResult;
   private volatile ConfigurationAdmin configAdmin;
@@ -162,16 +239,15 @@ public class PreferencesDialog extends JDialog implements StatusAwareCloseableDi
   /**
    * Creates a new {@link PreferencesDialog} instance.
    *
-   * @param aParent
-   *          the parent of the preferences window, can be <code>null</code>;
-   * @param aColorSchemeManager
-   *          the color scheme manager to use, cannot be <code>null</code>.
+   * @param aParent             the parent of the preferences window, can be <code>null</code>;
+   * @param aColorSchemeManager the color scheme manager to use, cannot be <code>null</code>.
    */
-  public PreferencesDialog( final Window aParent, final UIColorSchemeManager aColorSchemeManager )
+  public PreferencesDialog(final Window aParent, final UIColorSchemeManager aColorSchemeManager, UIThemeManager aUiThemeManager)
   {
     super( aParent, "", ModalityType.APPLICATION_MODAL );
 
     this.colorSchemeManager = aColorSchemeManager;
+    this.uiThemeManager = aUiThemeManager;
 
     // @formatter:off
     this.mouseWheelZooms = new JCheckBox();
@@ -198,16 +274,26 @@ public class PreferencesDialog extends JDialog implements StatusAwareCloseableDi
     this.autoCenterCapture = new JCheckBox();
     this.autoCenterCapture.setToolTipText( "Whether or not to auto-center the diagram to the trigger after a capture. Will be applied immediately." );
 
-    this.signalAlignment = new JComboBox( SignalAlignment.values() );
+    this.signalAlignment = new JComboBox<>( SignalAlignment.values() );
     this.signalAlignment.setToolTipText( "The vertical alignment of the signals itself. Will be applied after an acquisition." );
     this.signalAlignment.setRenderer( new SignalAlignmentRenderer() );
 
-    this.annotationAlignment = new JComboBox( SignalAlignment.values() );
+    this.annotationAlignment = new JComboBox<>( SignalAlignment.values() );
     this.annotationAlignment.setToolTipText( "The vertical aligment of the annotations. Will be applied immediately." );
     this.annotationAlignment.setRenderer( new SignalAlignmentRenderer() );
 
     this.colorScheme = new JComboBox( new ColorSchemeModel() );
     this.colorScheme.setToolTipText( "What color scheme is to be used. Will be applied immediately." );
+
+    this.uiTheme = new JComboBox<UIThemeModel>( new UIThemeModel() );
+    this.uiTheme.setToolTipText( "UI Theme. Will be applied immediately." );
+    this.uiTheme.addItemListener( (ItemEvent e) -> {
+        if (e.getStateChange() == ItemEvent.SELECTED)
+        {
+          String selectedItem = (String) e.getItem();
+          uiThemeManager.showPreviewTheme( selectedItem );
+        }
+    });
     // @formatter:on
 
     buildDialog();
@@ -234,6 +320,10 @@ public class PreferencesDialog extends JDialog implements StatusAwareCloseableDi
       {
         JErrorDialog.showDialog( getOwner(), "Failed to apply preferences!", exception );
       }
+    }
+    else
+    {
+      uiThemeManager.revertPreviewTheme();
     }
   }
 
@@ -285,6 +375,7 @@ public class PreferencesDialog extends JDialog implements StatusAwareCloseableDi
     this.signalAlignment.setSelectedItem( getSignalAlignment( properties.get( SIGNALVIEW_SIGNAL_ALIGNMENT ) ) );
     this.annotationAlignment.setSelectedItem( getSignalAlignment( properties.get( SIGNALVIEW_ANNOTATION_ALIGNMENT ) ) );
     this.colorScheme.setSelectedItem( String.valueOf( properties.get( COLOR_SCHEME ) ) );
+    this.uiTheme.setSelectedItem( String.valueOf( properties.get(USER_SELECTED_UI_THEME) ) );
   }
 
   /**
@@ -323,6 +414,12 @@ public class PreferencesDialog extends JDialog implements StatusAwareCloseableDi
     }
   }
 
+  private void applyNewUITheme(final String uiTheme, final Dictionary<String, Object> dictionary )
+  {
+    dictionary.put( USER_SELECTED_UI_THEME, uiTheme );
+    uiThemeManager.setTheme( uiTheme );
+  }
+
   /**
    * Applies all (new) preferences by updating the <em>original</em>
    * configuration object (from the ConfigurationAdmin service) with the changed
@@ -354,6 +451,12 @@ public class PreferencesDialog extends JDialog implements StatusAwareCloseableDi
       purgeOldColorScheme( properties );
 
       applyNewColorScheme( colorScheme, properties );
+    }
+
+    String uiTheme = ( String )this.uiTheme.getSelectedItem();
+    if ( uiTheme != null )
+    {
+      applyNewUITheme( uiTheme, properties );
     }
 
     // Update the configuration, so it will be persisted...
@@ -424,6 +527,11 @@ public class PreferencesDialog extends JDialog implements StatusAwareCloseableDi
 
     pane.add( createRightAlignedLabel( "Default scheme" ) );
     pane.add( this.colorScheme );
+
+    addSeparator( pane, "UI Theme" );
+
+    pane.add( createRightAlignedLabel( "Theme" ) );
+    pane.add( this.uiTheme);
 
     makeEditorGrid( pane, 10, 10 );
     return pane;
