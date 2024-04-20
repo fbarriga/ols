@@ -38,17 +38,6 @@ public class JLazyComboBox<T> extends JComboBox<T>
 {
   // INNER TYPES
 
-  // HACK: get access to private getPopupHeightForRowCount(int) method...
-  private static class BasicComboPopupProxy extends BasicComboPopup {
-    public BasicComboPopupProxy(JComboBox<Object> combo) {
-      super(combo);
-    }
-
-    public int getPopupHeightForRowCount(int maxRowCount) {
-      return super.getPopupHeightForRowCount(maxRowCount);
-    }
-  }
-
   /**
    * Provides a data provider for lazy loaded comboboxes.
    */
@@ -150,32 +139,6 @@ public class JLazyComboBox<T> extends JComboBox<T>
     private void correctSize( final JComboBox<E> aComboBox, final Dimension aPreferredSize, final int aAddedItemCount )
     {
       aComboBox.setPreferredSize( aPreferredSize );
-
-      if ( aAddedItemCount > 0 )
-      {
-        // Idea for this taken from:
-        // <http://forums.java.net/jive/message.jspa?messageID=61267>
-        final Object comp = aComboBox.getUI().getAccessibleChild( aComboBox, 0 );
-        if ( !( comp instanceof BasicComboPopup ) )
-        {
-          return;
-        }
-
-        final HostInfo hostInfo = HostUtils.getHostInfo();
-        if ( !hostInfo.isMacOS() )
-        {
-          final BasicComboPopupProxy popup = (BasicComboPopupProxy) comp;
-          final JScrollPane scrollPane = (JScrollPane) popup.getComponent(0);
-
-          final int newWidth = Math.max(scrollPane.getPreferredSize().width, aPreferredSize.width);
-          final int newHeight = popup.getPopupHeightForRowCount(
-                  Math.min(aComboBox.getMaximumRowCount(), aAddedItemCount));
-
-          final Dimension size = new Dimension(newWidth, newHeight);
-          scrollPane.setPreferredSize(size);
-          scrollPane.setMaximumSize(size);
-        }
-      }
     }
   }
 
