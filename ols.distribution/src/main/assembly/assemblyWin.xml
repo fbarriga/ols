@@ -96,10 +96,11 @@
 			<useDefaultExcludes>true</useDefaultExcludes>
 			<includes>
 				<include>AUTHOR</include>
-				<include>README</include>
+				<include>README.md</include>
 				<include>LICENSE</include>
 				<include>CHANGELOG</include>
 				<include>run.bat</include>
+				<include>LogicSniffer.ico</include>
 			</includes>
 			<lineEnding>dos</lineEnding>
 			<directoryMode>0755</directoryMode>
@@ -110,11 +111,9 @@
 			<outputDirectory>/</outputDirectory>
 			<useDefaultExcludes>true</useDefaultExcludes>
 			<includes>
-				<include>run.sh</include>
+				<include>jre/**</include>
 			</includes>
-			<lineEnding>unix</lineEnding>
 			<directoryMode>0755</directoryMode>
-			<fileMode>0755</fileMode>
 		</fileSet>
 	</fileSets>
 </assembly>

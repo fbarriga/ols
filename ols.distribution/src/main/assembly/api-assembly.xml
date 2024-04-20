@@ -39,24 +39,12 @@
 			<useDefaultExcludes>true</useDefaultExcludes>
 			<includes>
 				<include>AUTHOR</include>
-				<include>README</include>
+				<include>README.md</include>
 				<include>LICENSE</include>
-				<include>install-to-maven.bat</include>
 			</includes>
 			<lineEnding>dos</lineEnding>
-            <directoryMode>0755</directoryMode>
-            <fileMode>0644</fileMode>
-		</fileSet>
-		<fileSet>
-			<directory>${project.basedir}/src/main/resources</directory>
-			<outputDirectory>/</outputDirectory>
-			<useDefaultExcludes>true</useDefaultExcludes>
-			<includes>
-				<include>install-to-maven.sh</include>
-			</includes>
-			<lineEnding>unix</lineEnding>
-            <directoryMode>0755</directoryMode>
-			<fileMode>0755</fileMode>
+			<directoryMode>0755</directoryMode>
+			<fileMode>0644</fileMode>
 		</fileSet>
 	</fileSets>
 </assembly>

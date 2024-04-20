@@ -308,7 +308,7 @@
 										<descriptor>${basedir}/src/main/assembly/assemblyWin.xml</descriptor>
 									</descriptors>
 									<appendAssemblyId>true</appendAssemblyId>
-									<finalName>ols-${ols.version}</finalName>
+									<finalName>ols-${ols.version}-with-JRE</finalName>
 								</configuration>
 							</execution>
 						</executions>
@@ -317,6 +317,7 @@
 			</build>
 		</profile>
 		<profile>
+			<id>default</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
