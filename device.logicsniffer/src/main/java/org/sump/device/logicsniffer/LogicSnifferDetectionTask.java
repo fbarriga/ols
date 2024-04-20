@@ -1,5 +1,5 @@
 /*
- * OpenBench LogicSniffer / SUMP project 
+ * OpenBench LogicSniffer / SUMP project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ public class LogicSnifferDetectionTask implements Task<LogicSnifferMetadata>, Su
 
   /**
    * Creates a new LogicSnifferDetectionTask instance.
-   * 
+   *
    * @throws IOException
    *           in case of I/O problems.
    */
@@ -76,12 +76,12 @@ public class LogicSnifferDetectionTask implements Task<LogicSnifferMetadata>, Su
     StreamConnection connection = null;
 
     boolean gotResponse = false;
-
     try
     {
       connection = this.device.createStreamConnection( this.connectionURI );
 
       inputStream = connection.openDataInputStream();
+
       outputStream = connection.openDataOutputStream();
 
       final LogicSnifferMetadata metadata = new LogicSnifferMetadata();
@@ -97,9 +97,15 @@ public class LogicSnifferDetectionTask implements Task<LogicSnifferMetadata>, Su
         // Force the device into SUMP mode; this is necessary for multi-purpose
         // devices as the IRToy, and BusPirate...
         writeCmdGetDeviceId( outputStream );
-        readDeviceId( inputStream );
 
-        LOG.log( Level.INFO, "Detected SUMP-compatible device ..." );
+        if ( readDeviceId( inputStream ) != -1 )
+        {
+          LOG.info("Detected SUMP-compatible device ...");
+        }
+        else
+        {
+          LOG.info("Detected an unknown device ...");
+        }
 
         // Make sure nothing is left in our input buffer...
         flushInputStream( inputStream );
@@ -144,7 +150,7 @@ public class LogicSnifferDetectionTask implements Task<LogicSnifferMetadata>, Su
       }
       catch ( IOException exception )
       {
-        LOG.log( Level.INFO, "I/O connection while trying to close connection after device detect!", exception );
+        LOG.log( Level.WARNING, "I/O connection while trying to close connection after device detect!", exception );
       }
     }
   }
@@ -152,7 +158,7 @@ public class LogicSnifferDetectionTask implements Task<LogicSnifferMetadata>, Su
   /**
    * Flushes the given input stream by reading as many bytes as there are still
    * available.
-   * 
+   *
    * @param aResource
    *          the resource to flush, can be <code>null</code>.
    * @throws IOException
@@ -172,7 +178,7 @@ public class LogicSnifferDetectionTask implements Task<LogicSnifferMetadata>, Su
    * Determines the device profile for the current attached device. The device
    * profile provides us with detailed information about the capabilities of a
    * certain SUMP-compatible device.
-   * 
+   *
    * @param aName
    *          the name of the device, can be <code>null</code>.
    * @return a device profile, or <code>null</code> if no such profile could be
@@ -189,6 +195,7 @@ public class LogicSnifferDetectionTask implements Task<LogicSnifferMetadata>, Su
       if ( profile != null )
       {
         LOG.log( Level.INFO, "Using device profile: {0}", profile.getDescription() );
+        LOG.log( Level.INFO, "device profile details: {0}", profile );
       }
       else
       {
@@ -227,13 +234,10 @@ public class LogicSnifferDetectionTask implements Task<LogicSnifferMetadata>, Su
     return id;
   }
 
-  /**
-   * @param aMetadata
-   * @throws IOException
-   */
   private boolean readMetadata( final DataInputStream aInputStream, final LogicSnifferMetadata aMetadata )
       throws IOException
   {
+    LOG.fine( "Reading metadata..." );
     boolean gotResponse = false;
     int result = -1;
 
@@ -261,17 +265,17 @@ public class LogicSnifferDetectionTask implements Task<LogicSnifferMetadata>, Su
             // final Integer value = NumberUtils.convertByteOrder(
             // this.inputStream.readInt(), 32, ByteOrder.LITTLE_ENDIAN );
             final int value = aInputStream.readInt();
-            aMetadata.put( result, Integer.valueOf( value ) );
+            aMetadata.put( result, value);
           }
           else if ( type == 0x02 )
           {
             // key value is a 8-bit integer...
             final int value = aInputStream.read();
-            aMetadata.put( result, Integer.valueOf( value ) );
+            aMetadata.put( result, value);
           }
           else
           {
-            LOG.log( Level.INFO, "Ignoring unknown metadata type: {0}", Integer.valueOf( type ) );
+            LOG.log( Level.INFO, "Ignoring unknown metadata type: {0}", type);
           }
         }
       }
@@ -294,7 +298,7 @@ public class LogicSnifferDetectionTask implements Task<LogicSnifferMetadata>, Su
 
   /**
    * Reads a zero-terminated ASCII-string from the current input stream.
-   * 
+   *
    * @return the read string, can be empty but never <code>null</code>.
    * @throws IOException
    *           in case of I/O problems during the string read.
@@ -340,7 +344,7 @@ public class LogicSnifferDetectionTask implements Task<LogicSnifferMetadata>, Su
 
   /**
    * Resets the OLS device by sending 5 consecutive 'reset' commands.
-   * 
+   *
    * @throws IOException
    *           in case of I/O problems.
    */

@@ -15,19 +15,20 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110, USA
  *
- * 
+ *
  * Copyright (C) 2010-2011 - J.W. Janssen, http://www.lxtreme.nl
+ * Copyright (C) 2024 - Felipe Barriga Richards, http://github.com/fbarriga/ols
  */
 package nl.lxtreme.ols.io.serial;
 
 
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.microedition.io.*;
 
-import org.osgi.service.io.*;
-import org.osgi.service.log.*;
-
-import purejavacomm.*;
+import com.fazecast.jSerialComm.SerialPort;
+import org.osgi.service.io.ConnectionFactory;
 
 
 /**
@@ -50,12 +51,10 @@ public class CommConnectionFactory implements ConnectionFactory
    */
   private static final int MAX_TRIES = 10;
   /** Name to use when connecting to the port... */
-  private static final String CONNECT_ID = CommConnectionFactory.class.getSimpleName();
 
   // VARIABLES
 
-  // Injected by dependency manager...
-  private volatile LogService logService;
+  private static final Logger LOG = Logger.getLogger( CommConnectionFactory.class.getName() );
 
   // METHODS
 
@@ -67,24 +66,29 @@ public class CommConnectionFactory implements ConnectionFactory
   {
     try
     {
+      LOG.fine( "Creating connection using %s".formatted( aName ));
+
       final CommPortOptions options = new CommPortOptions( aName );
 
-      final SerialPort port = obtainSerialPort( options );
+      final var port = obtainSerialPort( options );
+      port.setBaudRate(options.getBaudrate());
+      port.setNumDataBits(options.getDatabits());
+      port.setNumStopBits(options.getStopbits());
+      port.setParity(options.getParityMode());
 
-      port.setSerialPortParams( options.getBaudrate(), options.getDatabits(), options.getStopbits(),
-          options.getParityMode() );
-
-      port.setFlowControlMode( options.getFlowControl() );
+      port.setFlowControl(options.getFlowControl());
       if ( aTimeouts )
       {
         // A receive timeout allows us to better control blocking I/O, such as
         // read() from the serial port...
-        port.enableReceiveTimeout( options.getReceiveTimeout() );
+        port.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, options.getReceiveTimeout(), port.getWriteTimeout());
       }
-      // Taken from
-      // <http://mailman.qbang.org/pipermail/rxtx/2010-September/7821768.html>
-      port.setRTS( true );
-      port.setDTR( options.isDTR() );
+
+      if (options.isDTR()) {
+        port.setDTR();
+      } else {
+        port.clearDTR();
+      }
 
       final CommConnectionImpl connection = new CommConnectionImpl( port );
 
@@ -102,14 +106,6 @@ public class CommConnectionFactory implements ConnectionFactory
     {
       throw new IOException( "Invalid URI!", exception );
     }
-    catch ( UnsupportedCommOperationException exception )
-    {
-      throw new IOException( "Unsupported operation!", exception );
-    }
-    catch ( NoSuchPortException exception )
-    {
-      throw new IOException( "No such port!" );
-    }
     catch ( InterruptedException exception )
     {
       throw new IOException( "Interrupted while opening port!" );
@@ -118,33 +114,21 @@ public class CommConnectionFactory implements ConnectionFactory
 
   /**
    * Returns the serial port instance.
-   * 
+   *
    * @param aOptions
    *          the serial port options, cannot be <code>null</code>.
    * @return the serial port instance, never <code>null</code>.
-   * @throws NoSuchPortException
-   *           in case the desired port does not exist;
-   * @throws PortInUseException
-   *           in case the desired port is already in use;
    * @throws IOException
    *           in case of other I/O problems.
    */
-  private SerialPort getSerialPort( final CommPortOptions aOptions ) throws NoSuchPortException, PortInUseException,
-      IOException
+  private SerialPort getSerialPort(final CommPortOptions aOptions ) throws IOException
   {
-    final CommPortIdentifier commPortId = CommPortIdentifier.getPortIdentifier( aOptions.getPortName() );
-    if ( commPortId.isCurrentlyOwned() && ( commPortId.getCurrentOwner() != CONNECT_ID ) )
-    {
-      throw new PortInUseException();
+    var port = SerialPort.getCommPort(aOptions.getPortName());
+    if (!port.openPort(100)) {
+      throw new IOException( "Cannot open serial port!" );
     }
 
-    final CommPort commPort = commPortId.open( CONNECT_ID, 2000 );
-    if ( !( commPort instanceof SerialPort ) )
-    {
-      throw new IOException( "Not a serial port?!" );
-    }
-
-    return ( SerialPort )commPort;
+    return port;
   }
 
   /**
@@ -156,41 +140,38 @@ public class CommConnectionFactory implements ConnectionFactory
    * "http://mailman.qbang.org/pipermail/rxtx/2010-September/7821768.html">this
    * posting</a> on the RxTx mailing list.
    * </p>
-   * 
+   *
    * @param aOptions
    *          the serial port options, cannot be <code>null</code>.
    * @return the serial port instance, never <code>null</code>.
-   * @throws NoSuchPortException
-   *           in case the desired port does (really) not exist;
    * @throws IOException
    *           in case of other I/O problems.
    */
-  private SerialPort obtainSerialPort( final CommPortOptions aOptions ) throws NoSuchPortException, IOException
+  private SerialPort obtainSerialPort(final CommPortOptions aOptions ) throws IOException
   {
-    int tries = MAX_TRIES;
+    int tries = 1;
     SerialPort port = null;
 
-    while ( ( tries-- >= 0 ) && ( port == null ) )
+    do
     {
+      LOG.fine( "obtaining serial port. try %d/%d".formatted( tries, MAX_TRIES ) );
       try
       {
         port = getSerialPort( aOptions );
+        LOG.fine( "Got serial port after %d tries".formatted( tries ) );
       }
-      catch ( PortInUseException exception )
+      catch ( IOException exception )
       {
-        this.logService.log( LogService.LOG_DEBUG, "Port (still) in use!", exception );
+        LOG.log(Level.WARNING, "Error opening port!", exception );
+        if (tries == MAX_TRIES) {
+          throw exception;
+        }
       }
-      catch ( NoSuchPortException exception )
-      {
-        this.logService.log( LogService.LOG_DEBUG, "No such port!", exception );
-        // Immediately stop trying.
-        tries = -1;
-      }
-    }
+    } while( ( tries++ <= MAX_TRIES ) && ( port == null ) );
 
     if ( port == null )
     {
-      throw new NoSuchPortException();
+      throw new IOException("Cannot open serial port!");
     }
 
     return port;

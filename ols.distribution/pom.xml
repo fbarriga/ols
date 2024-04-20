@@ -104,17 +104,22 @@
 		</dependency>
 		<dependency>
 			<groupId>nl.lxtreme.ols</groupId>
+			<artifactId>lib.jserialcomm</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>nl.lxtreme.ols</groupId>
+			<artifactId>lib.jvt220</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>nl.lxtreme.ols</groupId>
 			<artifactId>util</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>nl.lxtreme.ols</groupId>
 			<artifactId>test.util</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>nl.lxtreme.ols</groupId>
-			<artifactId>org.rxtx</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>

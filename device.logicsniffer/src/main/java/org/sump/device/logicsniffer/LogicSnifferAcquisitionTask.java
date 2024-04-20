@@ -15,8 +15,9 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110, USA
  *
- * 
+ *
  * Copyright (C) 2010-2011 - J.W. Janssen, http://www.lxtreme.nl
+ * Copyright (C) 2024 - Felipe Barriga Richards, http://github.com/fbarriga/ols
  */
 package org.sump.device.logicsniffer;
 
@@ -79,7 +80,7 @@ public class LogicSnifferAcquisitionTask implements SumpProtocolConstants, Acqui
    * Sends the configuration to the device, starts it, reads the captured data
    * and returns a CapturedData object containing the data read as well as
    * device configuration information.
-   * 
+   *
    * @return the captured results, never <code>null</code>.
    * @throws IOException
    *           when writing to or reading from device fails
@@ -119,15 +120,15 @@ public class LogicSnifferAcquisitionTask implements SumpProtocolConstants, Acqui
 
     if ( samples.length < sampleCount )
     {
-      LOG.log( Level.INFO, "Only {0} samples read!", Integer.valueOf( samples.length ) );
+      LOG.log( Level.INFO, "Only {0} samples read!", samples.length);
     }
     else
     {
-      LOG.log( Level.FINE, "{0} samples read. Starting post processing...", Integer.valueOf( sampleCount ) );
+      LOG.log( Level.FINE, "{0} samples read. Starting post processing...", sampleCount);
     }
 
-    final List<Integer> values = new ArrayList<Integer>();
-    final List<Long> timestamps = new ArrayList<Long>();
+    final List<Integer> values = new ArrayList<>();
+    final List<Long> timestamps = new ArrayList<>();
 
     // collect additional information for CapturedData; we use arrays here,
     // as their values are to be filled from anonymous inner classes...
@@ -139,8 +140,8 @@ public class LogicSnifferAcquisitionTask implements SumpProtocolConstants, Acqui
     {
       public void addValue( final int aSampleValue, final long aTimestamp )
       {
-        values.add( Integer.valueOf( aSampleValue ) );
-        timestamps.add( Long.valueOf( aTimestamp ) );
+        values.add(aSampleValue);
+        timestamps.add(aTimestamp);
       }
 
       public void ready( final long aAbsoluteLength, final long aTriggerPosition )
@@ -170,7 +171,7 @@ public class LogicSnifferAcquisitionTask implements SumpProtocolConstants, Acqui
    * <p>
    * Note: not all versions of the OLS device firmware support a selftest!
    * </p>
-   * 
+   *
    * @throws IOException
    *           in case of I/O problems.
    */
@@ -182,16 +183,6 @@ public class LogicSnifferAcquisitionTask implements SumpProtocolConstants, Acqui
     this.outputStream.writeCmdRun();
   }
 
-  /**
-   * Factory method to create a sample procesor for the given numer of samples
-   * and sample values.
-   * 
-   * @param aSampleCount
-   *          the sample count;
-   * @param aSampleValues
-   *          the sample values; Detaches the currently attached port, if one
-   *          exists. This will close the serial port.
-   */
   protected void close()
   {
     StreamConnection conn = getStreamConnection();
@@ -242,7 +233,7 @@ public class LogicSnifferAcquisitionTask implements SumpProtocolConstants, Acqui
 
   /**
    * Returns the configuration as used for this device.
-   * 
+   *
    * @return a device configuration, never <code>null</code>.
    */
   protected final LogicSnifferConfig getConfig()
@@ -252,7 +243,7 @@ public class LogicSnifferAcquisitionTask implements SumpProtocolConstants, Acqui
 
   /**
    * Finds the device profile manager.
-   * 
+   *
    * @return a device profile manager instance, never <code>null</code>.
    * @throws IllegalArgumentException
    *           in case the device profile manager could not be found/obtained.
@@ -262,9 +253,6 @@ public class LogicSnifferAcquisitionTask implements SumpProtocolConstants, Acqui
     return this.deviceProfileManager;
   }
 
-  /**
-   * @return
-   */
   protected StreamConnection getStreamConnection()
   {
     return this.connection;
@@ -276,9 +264,7 @@ public class LogicSnifferAcquisitionTask implements SumpProtocolConstants, Acqui
    * This method will directly flush all incoming data, and, if configured,
    * delay a bit to ensure the device hardware is properly initialized.
    * </p>
-   * 
-   * @return <code>true</code> if the attach operation succeeded,
-   *         <code>false</code> otherwise.
+   *
    * @throws IOException
    *           in case of I/O problems during attaching to the device.
    */
@@ -341,7 +327,7 @@ public class LogicSnifferAcquisitionTask implements SumpProtocolConstants, Acqui
 
   /**
    * Tries to detect the LogicSniffer device.
-   * 
+   *
    * @return the device's metadata, never <code>null</code>.
    * @throws IOException
    *           in case the device could not be found, or in case of any other
@@ -399,7 +385,7 @@ public class LogicSnifferAcquisitionTask implements SumpProtocolConstants, Acqui
 
   /**
    * Reads all (or as many as possible) samples from the OLS device.
-   * 
+   *
    * @param aEnabledGroupCount
    *          the number of enabled groups (denotes the number of bytes for one sample);
    * @param aSampleCount
@@ -415,6 +401,7 @@ public class LogicSnifferAcquisitionTask implements SumpProtocolConstants, Acqui
     final int length = aEnabledGroupCount * aSampleCount;
     final byte[] rawData = new byte[length];
 
+    LOG.fine( "Reading samples...");
     try
     {
       int offset = 0;
@@ -437,6 +424,8 @@ public class LogicSnifferAcquisitionTask implements SumpProtocolConstants, Acqui
     }
     catch ( IOException exception )
     {
+      LOG.log( Level.INFO, "Exception while reading samples", exception );
+
       // Make sure to handle IO-interrupted exceptions properly!
       if ( !HostUtils.handleInterruptedException( exception ) )
       {
@@ -450,15 +439,16 @@ public class LogicSnifferAcquisitionTask implements SumpProtocolConstants, Acqui
 
       this.acquisitionProgressListener.acquisitionInProgress( 100 );
     }
-    
+
     if ( Thread.currentThread().isInterrupted() )
     {
+      LOG.fine( "Interrupted while reading samples");
       // We're interrupted while read samples, do not proceed...
       throw new InterruptedException();
     }
-    
+
     final int groupCount = this.config.getGroupCount();
-    
+
     // Normalize the raw data into the sample data, as expected...
     int[] samples = new int[aSampleCount];
     for ( int i = samples.length - 1, j = 0; i >= 0; i-- )

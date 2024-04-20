@@ -1,6 +1,7 @@
 #!/bin/sh
 
-mvn -Dpackage.osx.skip=true $@
+mvn $@
+#mvn -Dpackage.osx.skip=true $@
 cd ols.distribution/target
 if [ -f ols*-full.zip ]; then
 	unzip ols*-full.zip plugins/ -d ../../eclipse/run/

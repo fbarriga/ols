@@ -37,13 +37,16 @@ Prerequisites
 In order to run the OLS client, you need at least:
 
  - a support operating system. Current supported are:
+  - tested:
+   - Mac OSX 14.3 (Silicon)
+  - should work:
    - Windows XP, Vista and 7, both 32- and 64-bit;
    - Mac OSX (Intel only), both 32- and 64-bit;
    - Linux, both 32- and 64-bit;
-   - Solaris, 32-bit only.
+   - Solaris, 32-bit only
    other platforms *might* work, but need some hacking in the OLS client 
    itself;
- - Java 6, or 7, see [4].
+ - Java 17, see [4].
 
 
 Installation

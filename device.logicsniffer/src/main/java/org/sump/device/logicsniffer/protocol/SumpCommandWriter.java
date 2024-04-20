@@ -1,5 +1,5 @@
 /*
- * OpenBench LogicSniffer / SUMP project 
+ * OpenBench LogicSniffer / SUMP project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ public class SumpCommandWriter implements SumpProtocolConstants, Closeable
 
   /**
    * Creates a new {@link SumpCommandWriter} instance.
-   * 
+   *
    * @param aConfiguration
    *          the configuration to use, cannot be <code>null</code>;
    * @param aOutputStream
@@ -120,7 +120,7 @@ public class SumpCommandWriter implements SumpProtocolConstants, Closeable
    * <li>Unlimited. {values} can be followed by unlimited numbers of
    * {RLE-counts}.</li>
    * </ol>
-   * 
+   *
    * @return a RLE-mode, defaults to 1.
    */
   private static int determineRleMode()
@@ -137,10 +137,6 @@ public class SumpCommandWriter implements SumpProtocolConstants, Closeable
     this.outputStream.close();
   }
 
-  /**
-   * @param aConfiguration
-   * @throws IOException
-   */
   public void writeCmdFinishNow() throws IOException
   {
     final boolean isRleEnabled = this.config.isRleEnabled();
@@ -156,9 +152,6 @@ public class SumpCommandWriter implements SumpProtocolConstants, Closeable
     }
   }
 
-  /**
-   * @throws IOException
-   */
   public void writeCmdGetId() throws IOException
   {
     sendCommand( CMD_ID );
@@ -174,9 +167,6 @@ public class SumpCommandWriter implements SumpProtocolConstants, Closeable
 
   /**
    * Resets the OLS device by sending 5 consecutive 'reset' commands.
-   * 
-   * @throws IOException
-   *           in case of I/O problems.
    */
   public void writeCmdReset() throws IOException
   {
@@ -186,18 +176,11 @@ public class SumpCommandWriter implements SumpProtocolConstants, Closeable
     }
   }
 
-  /**
-   * @throws IOException
-   */
   public void writeCmdRun() throws IOException
   {
     sendCommand( CMD_RUN );
   }
 
-  /**
-   * @param aConfiguration
-   * @throws IOException
-   */
   public int writeDeviceConfiguration() throws IOException
   {
     int trigcount;
@@ -318,7 +301,7 @@ public class SumpCommandWriter implements SumpProtocolConstants, Closeable
    * Sends a short command to the given stream. This method is intended to be
    * used for short commands, but can also be called with long command opcodes
    * if the data portion is to be set to 0.
-   * 
+   *
    * @param aOpcode
    *          one byte operation code
    * @throws IOException
@@ -328,7 +311,7 @@ public class SumpCommandWriter implements SumpProtocolConstants, Closeable
   {
     if ( LOG.isLoggable( Level.ALL ) || LOG.isLoggable( Level.FINE ) )
     {
-      LOG.log( Level.FINE, String.format( "Sending short command: 0x%02x", Integer.valueOf( aOpcode & 0xFF ) ) );
+      LOG.log( Level.FINE, String.format( "Sending short command: 0x%02x", aOpcode & 0xFF) );
     }
 
     this.outputStream.writeByte( aOpcode );
@@ -337,7 +320,7 @@ public class SumpCommandWriter implements SumpProtocolConstants, Closeable
 
   /**
    * Sends a long command to the given stream.
-   * 
+   *
    * @param aOpcode
    *          one byte operation code
    * @param aData
@@ -371,7 +354,7 @@ public class SumpCommandWriter implements SumpProtocolConstants, Closeable
 
   /**
    * Sends the trigger mask, value and configuration to the OLS device.
-   * 
+   *
    * @return the stop counter that is used for the trigger configuration.
    * @throws IOException
    *           in case of I/O problems.

@@ -17,6 +17,7 @@
  *
  * 
  * Copyright (C) 2010-2011 - J.W. Janssen, http://www.lxtreme.nl
+ * Copyright (C) 2024 - Felipe Barriga Richards, http://github.com/fbarriga/ols
  */
 package nl.lxtreme.ols.api.devices;
 
@@ -45,7 +46,7 @@ public interface Device extends Closeable
    *           in case of I/O problems during the creation of the acquisition
    *           task.
    */
-  public AcquisitionTask createAcquisitionTask( AcquisitionProgressListener aProgressListener ) throws IOException;
+  AcquisitionTask createAcquisitionTask( AcquisitionProgressListener aProgressListener ) throws IOException;
 
   /**
    * Creates a new {@link CancelTask} for canceling the current acquisition from
@@ -57,14 +58,20 @@ public interface Device extends Closeable
    *           in case of I/O problems during the creating of the cancellation
    *           task.
    */
-  public CancelTask createCancelTask() throws IOException;
+  CancelTask createCancelTask() throws IOException;
 
   /**
    * Returns a descriptive name of this device controller.
    * 
    * @return name of the controller, cannot be <code>null</code>.
    */
-  public String getName();
+  String getName();
+
+  /**
+   * Returns the priority of this device. The priority is used to determine the order in which devices
+   * are presented to the user on the UI (Devices Menu).
+   */
+  int getUiPriority();
 
   /**
    * Returns whether this device is already set up or not.
@@ -72,7 +79,7 @@ public interface Device extends Closeable
    * @return <code>true</code> if there is a "valid" setup for this device,
    *         <code>false</code> otherwise.
    */
-  public boolean isSetup();
+  boolean isSetup();
 
   /**
    * Allows this device controller to set up the device by means of presenting
@@ -85,5 +92,5 @@ public interface Device extends Closeable
    *         acknowledged the setup), <code>false</code> if the setup is aborted
    *         by the user.
    */
-  public boolean setupCapture( final java.awt.Window aParent );
+  boolean setupCapture( final java.awt.Window aParent );
 }

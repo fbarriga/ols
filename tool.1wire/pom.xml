@@ -65,6 +65,7 @@
 						<Bundle-License>GPLv2;link=http://www.gnu.org/licenses/gpl-2.0.html</Bundle-License>
 						<OLS-Tool>1.0</OLS-Tool>
 						<OLS-ToolClass>nl.lxtreme.ols.tool.onewire.OneWireAnalyser</OLS-ToolClass>
+						<Export-Package>nl.lxtreme.ols.tool.onewire</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>

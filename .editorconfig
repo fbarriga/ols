@@ -1,0 +1,28 @@
+# EditorConfig helps developers define and maintain consistent coding styles between different editors and IDEs.
+# For more information about the EditorConfig project, please see http://editorconfig.org/
+
+# Top-most EditorConfig file
+root = true
+
+# Set the default charset to UTF-8
+[*]
+charset = utf-8
+
+# Use LF (Unix) line endings
+end_of_line = lf
+
+# Use four spaces for indentation
+indent_style = space
+indent_size = 2
+
+# Ensure a newline at the end of each file
+insert_final_newline = true
+
+[pom.xml]
+indent_style = tab
+
+[*.java]
+# tag::intellij-java-specific[]
+ij_any_space_before_if_left_brace = true
+ij_any_space_before_for_parentheses = true
+ij_any_space_before_if_parentheses = true

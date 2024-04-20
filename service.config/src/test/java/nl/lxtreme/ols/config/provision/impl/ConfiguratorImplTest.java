@@ -29,7 +29,6 @@ import java.util.*;
 
 import org.junit.*;
 import org.osgi.service.cm.*;
-import org.osgi.service.log.*;
 
 
 /**
@@ -91,13 +90,10 @@ public class ConfiguratorImplTest
   @Before
   public void setUp()
   {
-    LogService logService = mock( LogService.class );
-
     this.configAdmin = mock( ConfigurationAdmin.class );
 
     this.configurator = new ConfiguratorImpl();
     this.configurator.setConfigurationAdmin( this.configAdmin );
-    this.configurator.setLogService( logService );
   }
 
   private String getConfigPid( final File file )

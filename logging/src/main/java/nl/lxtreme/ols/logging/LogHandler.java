@@ -1,5 +1,5 @@
 /*
- * OpenBench LogicSniffer / SUMP project 
+ * OpenBench LogicSniffer / SUMP project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
  *
  * Copyright (C) 2006-2010 Michael Poppitz, www.sump.org
  * Copyright (C) 2010-2012 J.W. Janssen, www.lxtreme.nl
+ * Copyright (C) 2024 - Felipe Barriga Richards, http://github.com/fbarriga/ols
  */
 package nl.lxtreme.ols.logging;
 
@@ -29,17 +30,16 @@ import java.util.logging.*;
 
 import org.osgi.service.log.*;
 
-
 /**
- * Implements a custom log handler for forwarding all JUL log statements to the
- * LogService of OSGi.
+ * Implements a custom log handler for forwarding all java.util.logging to LogService of OSGi.
  */
 public class LogHandler extends Handler
 {
   // VARIABLES
 
-  // Injected by Felix DM...
-  private volatile LogService logService;
+  // FIXME: This should be set by Felix but I don't know why it isn't happening
+  private final LogService logService;
+
   private volatile Level originalLevel;
 
   private final List<Handler> originalRootHandlers;
@@ -52,6 +52,7 @@ public class LogHandler extends Handler
   public LogHandler()
   {
     this.originalRootHandlers = new ArrayList<Handler>();
+    this.logService = new ConsoleLogger();
   }
 
   // METHODS
@@ -93,14 +94,22 @@ public class LogHandler extends Handler
     }
 
     Throwable thrownException = aRecord.getThrown();
-    this.logService.log( mapLevel( aRecord.getLevel() ), aRecord.getLoggerName() + " " + message, thrownException );
+
+    if (this.logService instanceof ConsoleLogger)
+    {
+      // ConsoleLogger supports java.util.logging levels
+      this.logService.log(aRecord.getLevel().intValue(), "[" + aRecord.getLoggerName() + "] " + message, thrownException);
+    }
+    else
+    {
+      this.logService.log(mapJavaLoggerToLogService(aRecord.getLevel()), "[" + aRecord.getLoggerName() + "] " + message, thrownException);
+    }
   }
 
   /**
    * Called by Felix DependencyManager when starting this component.
    */
-  public void start() throws Exception
-  {
+  public void start() {
     LogManager logManager = LogManager.getLogManager();
     Logger logger = logManager.getLogger( "" );
 
@@ -112,8 +121,7 @@ public class LogHandler extends Handler
   /**
    * Called by Felix DependencyManager upon stopping this component.
    */
-  public void stop() throws Exception
-  {
+  public void stop() {
     LogManager logManager = LogManager.getLogManager();
     Logger logger = logManager.getLogger( "" );
 
@@ -122,9 +130,7 @@ public class LogHandler extends Handler
 
   /**
    * Tests whether the given log record comes from a "banned" logger.
-   * 
-   * @param aRecord
-   * @return
+   *
    * @see Activator#isFilterJdkUILogs()
    */
   private boolean isBannedLogger( LogRecord aRecord )
@@ -135,28 +141,28 @@ public class LogHandler extends Handler
       return false;
     }
 
-    return name.startsWith( "java.awt." ) || name.startsWith( "sun.awt." ) || name.startsWith( "javax.swing." );
+    return name.startsWith( "java.awt." ) || name.startsWith( "sun.awt." ) || name.startsWith( "javax.swing." ) || name.startsWith( "sun.lwawt" );
   }
 
   /**
    * Map the log levels of the Java logging API to those of the OSGi LogService.
    */
-  private int mapLevel( final Level aLevel )
+  private int mapJavaLoggerToLogService(final java.util.logging.Level aLevel )
   {
     int value = aLevel.intValue();
     if ( value >= Level.SEVERE.intValue() )
     {
-      return LogService.LOG_ERROR;
+      return org.osgi.service.log.LogService.LOG_ERROR;
     }
     if ( value >= Level.WARNING.intValue() )
     {
-      return LogService.LOG_WARNING;
+      return org.osgi.service.log.LogService.LOG_WARNING;
     }
     if ( value >= Level.INFO.intValue() )
     {
-      return LogService.LOG_INFO;
+      return org.osgi.service.log.LogService.LOG_INFO;
     }
-    return LogService.LOG_DEBUG;
+    return org.osgi.service.log.LogService.LOG_DEBUG;
   }
 
   /**
@@ -167,7 +173,7 @@ public class LogHandler extends Handler
    *          the list of handlers to store the replaced log handlers in, cannot
    *          be <code>null</code>.
    */
-  private void replaceLogHandlers( final Logger aLogger, final List<Handler> aHandlerList )
+  private void replaceLogHandlers( final java.util.logging.Logger aLogger, final List<Handler> aHandlerList )
   {
     if ( aLogger == null )
     {
@@ -181,7 +187,6 @@ public class LogHandler extends Handler
       aHandlerList.add( h );
     }
 
-    aLogger.setLevel( getJavaLogLevel() );
     aLogger.addHandler( this );
   }
 

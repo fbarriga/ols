@@ -32,7 +32,6 @@ import nl.lxtreme.ols.api.data.project.*;
 import nl.lxtreme.ols.client.osgi.UserSessionManager.WindowStateListener;
 
 import org.junit.*;
-import org.osgi.service.log.*;
 import org.osgi.service.prefs.*;
 
 
@@ -51,8 +50,7 @@ public class WindowStateListenerTest
    * Sets up the test cases.
    */
   @Before
-  public void setUp() throws Exception
-  {
+  public void setUp() {
     PreferencesService mockedPreferenceService = mock( PreferencesService.class );
     
     Project mockedProject = mock( Project.class );
@@ -63,7 +61,6 @@ public class WindowStateListenerTest
     this.windowStateListener = spy( new WindowStateListener() );
     this.windowStateListener.setPreferenceService( mockedPreferenceService );
     this.windowStateListener.setProjectManager( mockedProjectManager );
-    this.windowStateListener.setLogger( mock( LogService.class ) );
   }
 
   /**

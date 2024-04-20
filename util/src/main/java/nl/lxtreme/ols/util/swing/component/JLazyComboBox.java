@@ -21,8 +21,10 @@
 package nl.lxtreme.ols.util.swing.component;
 
 
+import nl.lxtreme.ols.util.HostInfo;
+import nl.lxtreme.ols.util.HostUtils;
+
 import java.awt.*;
-import java.lang.reflect.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -32,57 +34,45 @@ import javax.swing.plaf.basic.*;
 /**
  * Provides a lazy-loaded combobox.
  */
-public class JLazyComboBox extends JComboBox
+public class JLazyComboBox<T> extends JComboBox<T>
 {
   // INNER TYPES
+
+  // HACK: get access to private getPopupHeightForRowCount(int) method...
+  private static class BasicComboPopupProxy extends BasicComboPopup {
+    public BasicComboPopupProxy(JComboBox<Object> combo) {
+      super(combo);
+    }
+
+    public int getPopupHeightForRowCount(int maxRowCount) {
+      return super.getPopupHeightForRowCount(maxRowCount);
+    }
+  }
 
   /**
    * Provides a data provider for lazy loaded comboboxes.
    */
-  public static interface ItemProvider
+  public interface ItemProvider<E>
   {
     /**
      * Returns the items.
-     * 
+     *
      * @return an array of items, cannot be <code>null</code>.
      */
-    Object[] getItems();
+    E[] getItems();
   }
 
   /**
    * A popup menu listener that populates the combobox model with items right
    * before it is shown.
    */
-  static final class ComboboxPopupListener implements PopupMenuListener
+  static final class ComboboxPopupListener<E> implements PopupMenuListener
   {
     // CONSTANTS
 
-    private static final Method popupHeightForRowCountMethod;
-
-    static
-    {
-      // For sake of performance (and readability) do this only once for each
-      // time this class is loaded...
-      try
-      {
-        popupHeightForRowCountMethod = BasicComboPopup.class.getDeclaredMethod( "getPopupHeightForRowCount",
-            Integer.TYPE );
-        popupHeightForRowCountMethod.setAccessible( true );
-      }
-      catch ( SecurityException exception )
-      {
-        throw new RuntimeException(
-            "Security exception while trying to access BasicComboPopup#getPopupHeightForRowCount!", exception );
-      }
-      catch ( NoSuchMethodException exception )
-      {
-        throw new RuntimeException( "No such method: BasicComboPopup#getPopupHeightForRowCount()?!", exception );
-      }
-    }
-
     // VARIABLES
 
-    private final ItemProvider itemProvider;
+    private final ItemProvider<E> itemProvider;
 
     // CONSTRUCTORS
 
@@ -93,7 +83,7 @@ public class JLazyComboBox extends JComboBox
      *          the item provider to use to provide the individual items to this
      *          combobox listener.
      */
-    public ComboboxPopupListener( final ItemProvider aItemProvider )
+    public ComboboxPopupListener( final ItemProvider<E> aItemProvider )
     {
       this.itemProvider = aItemProvider;
     }
@@ -124,7 +114,7 @@ public class JLazyComboBox extends JComboBox
     @Override
     public void popupMenuWillBecomeVisible( final PopupMenuEvent aEvent )
     {
-      final JComboBox combobox = ( JComboBox )aEvent.getSource();
+      final JComboBox<E> combobox = ( JComboBox<E> )aEvent.getSource();
       final Dimension originalPreferredSize = combobox.getPreferredSize();
 
       // In case the combobox model is empty; we lazy add the ports we currently
@@ -132,10 +122,10 @@ public class JLazyComboBox extends JComboBox
       if ( combobox.getItemCount() <= 0 )
       {
         // By default a mutable combobox model is set;
-        final MutableComboBoxModel model = ( MutableComboBoxModel )combobox.getModel();
+        final MutableComboBoxModel<E> model = ( MutableComboBoxModel<E> )combobox.getModel();
 
-        final Object[] items = this.itemProvider.getItems();
-        for ( Object item : items )
+        final var items = this.itemProvider.getItems();
+        for ( E item : items )
         {
           model.addElement( item );
         }
@@ -157,7 +147,7 @@ public class JLazyComboBox extends JComboBox
      * @param aAddedItemCount
      *          the number of added items, >= 0.
      */
-    private void correctSize( final JComboBox aComboBox, final Dimension aPreferredSize, final int aAddedItemCount )
+    private void correctSize( final JComboBox<E> aComboBox, final Dimension aPreferredSize, final int aAddedItemCount )
     {
       aComboBox.setPreferredSize( aPreferredSize );
 
@@ -171,43 +161,20 @@ public class JLazyComboBox extends JComboBox
           return;
         }
 
-        final BasicComboPopup popup = ( BasicComboPopup )comp;
-        final JScrollPane scrollPane = ( JScrollPane )popup.getComponent( 0 );
+        final HostInfo hostInfo = HostUtils.getHostInfo();
+        if ( hostInfo.isMacOS() ) {
+        } else {
+          final BasicComboPopupProxy popup = (BasicComboPopupProxy) comp;
+          final JScrollPane scrollPane = (JScrollPane) popup.getComponent(0);
 
-        final int newWidth = Math.max( scrollPane.getPreferredSize().width, aPreferredSize.width );
-        final int newHeight = getPopupHeightForRowCount( popup,
-            Math.min( aComboBox.getMaximumRowCount(), aAddedItemCount ) );
+          final int newWidth = Math.max(scrollPane.getPreferredSize().width, aPreferredSize.width);
+          final int newHeight = popup.getPopupHeightForRowCount(
+                  Math.min(aComboBox.getMaximumRowCount(), aAddedItemCount));
 
-        final Dimension size = new Dimension( newWidth, newHeight );
-        scrollPane.setPreferredSize( size );
-        scrollPane.setMaximumSize( size );
-      }
-    }
-
-    /**
-     * Invokes the getPopupHeightForRowCount method on the given popup.
-     * 
-     * @param aPopup
-     *          the combobox popup to invoke the method on;
-     * @param aItemCount
-     *          the item count to calculate the height for.
-     * @return a popup height, >= 0.
-     */
-    private int getPopupHeightForRowCount( final BasicComboPopup aPopup, final int aItemCount )
-    {
-      try
-      {
-        final Integer result = ( Integer )popupHeightForRowCountMethod.invoke( aPopup, Integer.valueOf( aItemCount ) );
-        return result.intValue();
-      }
-      catch ( IllegalAccessException exception )
-      {
-        throw new RuntimeException( "BasicComboPopup#getPopupHeightForRowCount not accessible?!", exception );
-      }
-      catch ( InvocationTargetException exception )
-      {
-        throw new RuntimeException( "BasicComboPopup#getPopupHeightForRowCount throws exception?!",
-            exception.getCause() );
+          final Dimension size = new Dimension(newWidth, newHeight);
+          scrollPane.setPreferredSize(size);
+          scrollPane.setMaximumSize(size);
+        }
       }
     }
   }
@@ -225,10 +192,9 @@ public class JLazyComboBox extends JComboBox
    *          the item provider to use for populating this combobox, cannot be
    *          <code>null</code>.
    */
-  public JLazyComboBox( final ItemProvider aItemProvider )
+  public JLazyComboBox( final ItemProvider<T> aItemProvider )
   {
-    super( new DefaultComboBoxModel() );
-
-    addPopupMenuListener( new ComboboxPopupListener( aItemProvider ) );
+    super( new DefaultComboBoxModel<>() );
+    addPopupMenuListener( new ComboboxPopupListener<>( aItemProvider ) );
   }
 }

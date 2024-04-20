@@ -22,10 +22,6 @@
 		</dependency>
 		<dependency>
 			<groupId>nl.lxtreme.ols</groupId>
-			<artifactId>org.rxtx</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>nl.lxtreme.ols</groupId>
 			<artifactId>service.io</artifactId>
 		</dependency>
 		<dependency>
@@ -78,6 +74,7 @@
 						<Bundle-Activator>org.sump.device.logicsniffer.Activator</Bundle-Activator>
 						<OLS-Device>1.0</OLS-Device>
 						<OLS-DeviceClass>org.sump.device.logicsniffer.LogicSnifferDevice</OLS-DeviceClass>
+						<Embed-Dependency>*;scope=runtime;inline=true</Embed-Dependency>
 					</instructions>
 				</configuration>
 			</plugin>

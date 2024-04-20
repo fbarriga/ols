@@ -24,11 +24,12 @@ package nl.lxtreme.ols.io;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.microedition.io.*;
 
 import org.osgi.framework.*;
 import org.osgi.service.io.*;
-import org.osgi.service.log.*;
 
 
 /**
@@ -41,8 +42,7 @@ public class ConnectorServiceImpl implements ConnectorService
   private final BundleContext context;
   private final List<Connection> openConnections;
 
-  // Injected by DependencyManager...
-  private volatile LogService logService;
+  private static final Logger LOG = Logger.getLogger( ConnectorServiceImpl.class.getName() );
 
   // CONSTRUCTORS
 
@@ -221,7 +221,7 @@ public class ConnectorServiceImpl implements ConnectorService
       }
       catch ( IOException exception )
       {
-        this.logService.log( LogService.LOG_DEBUG, "I/O exception closing connection!", exception );
+        LOG.log(Level.FINE, "I/O exception closing connection!", exception );
       }
     }
   }

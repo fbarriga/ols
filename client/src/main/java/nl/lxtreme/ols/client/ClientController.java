@@ -17,6 +17,7 @@
  *
  *
  * Copyright (C) 2010-2011 - J.W. Janssen, http://www.lxtreme.nl
+ * Copyright (C) 2024 - Felipe Barriga Richards, http://github.com/fbarriga/ols
  */
 package nl.lxtreme.ols.client;
 
@@ -729,11 +730,10 @@ public final class ClientController implements ActionProvider, AcquisitionProgre
    */
   public String[] getDeviceNames()
   {
-    List<String> result = new ArrayList<String>( this.devices.keySet() );
-    // Make sure we've got a predictable order of names...
-    Collections.sort( result );
-
-    return result.toArray( new String[result.size()] );
+    return this.devices.values().stream()
+      .sorted( Comparator.comparingInt(Device::getUiPriority).thenComparing(Device::getName) )
+      .map( Device::getName )
+      .toArray(String[]::new);
   }
 
   /**

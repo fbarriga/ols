@@ -17,12 +17,12 @@
  *
  * 
  * Copyright (C) 2010-2011 - J.W. Janssen, http://www.lxtreme.nl
+ * Copyright (C) 2024 - Felipe Barriga Richards, http://github.com/fbarriga/ols
  */
 package nl.lxtreme.ols.device.test;
 
 
 import java.awt.*;
-import java.io.*;
 
 import nl.lxtreme.ols.api.acquisition.*;
 import nl.lxtreme.ols.api.devices.*;
@@ -33,6 +33,11 @@ import nl.lxtreme.ols.api.devices.*;
  */
 public class TestDevice implements Device
 {
+  // CONSTANTS
+
+  private static final String NAME = "Test Device";
+  private static final int UI_PRIORITY = 3;
+
   // VARIABLES
 
   private TestDeviceDialog configDialog;
@@ -54,7 +59,7 @@ public class TestDevice implements Device
    * {@inheritDoc}
    */
   @Override
-  public void close() throws IOException
+  public void close()
   {
     // No-op...
   }
@@ -64,7 +69,6 @@ public class TestDevice implements Device
    */
   @Override
   public AcquisitionTask createAcquisitionTask( final AcquisitionProgressListener aProgressListener )
-      throws IOException
   {
     return new TestAcquisitionTask( this.configDialog, aProgressListener );
   }
@@ -73,7 +77,7 @@ public class TestDevice implements Device
    * {@inheritDoc}
    */
   @Override
-  public CancelTask createCancelTask() throws IOException
+  public CancelTask createCancelTask()
   {
     // Nothing special is needed...
     return null;
@@ -85,7 +89,13 @@ public class TestDevice implements Device
   @Override
   public String getName()
   {
-    return "Test Device";
+    return NAME;
+  }
+
+  @Override
+  public int getUiPriority()
+  {
+    return UI_PRIORITY;
   }
 
   /**
@@ -98,7 +108,7 @@ public class TestDevice implements Device
   }
 
   /**
-   * @see nl.lxtreme.ols.api.devices.Device#setupCapture()
+   * @see nl.lxtreme.ols.api.devices.Device#setupCapture(Window)
    */
   @Override
   public boolean setupCapture( final Window aOwner )

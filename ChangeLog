@@ -70,7 +70,7 @@
 
 2011-11-25  JaWi <j.w.janssen@lxtreme.nl>
 
-	* ChangeLog, ols.distribution/src/main/resources/CHANGELOG, pom.xml: 
+	* ChangeLog, ols.distribution/src/main/resources/CHANGELOG, pom.xml:
 	Preparation for beta 2.
 
 2011-11-25  JaWi <j.w.janssen@lxtreme.nl>
@@ -139,7 +139,7 @@
 	client/src/main/java/nl/lxtreme/ols/client/diagram/Diagram.java,
 	client/src/main/java/nl/lxtreme/ols/client/osgi/ComponentProviderTr
 	acker.java,
-	client/src/main/java/nl/lxtreme/ols/client/osgi/OsgiHelper.java: 
+	client/src/main/java/nl/lxtreme/ols/client/osgi/OsgiHelper.java:
 	Further cleanups on client code.
 
 2011-11-16  JaWi <j.w.janssen@lxtreme.nl>
@@ -266,7 +266,7 @@
 	util/src/main/java/nl/lxtreme/ols/util/osgi/WhiteboardHelper.java,
 	util/src/main/java/nl/lxtreme/ols/util/swing/component/JErrorDialog
 	.java, util/src/main/resources/host.properties,
-	util/src/test/java/nl/lxtreme/ols/util/HostUtilsTest.java: 
+	util/src/test/java/nl/lxtreme/ols/util/HostUtilsTest.java:
 	Introduced Felix dependency manager for util & client projects (more
 	to come); allowed major cleanup of client code base.
 
@@ -296,19 +296,19 @@
 	isDialog.java,
 	tool.uart/src/test/java/nl/lxtreme/ols/tool/uart/UARTAnalyserWorker
 	DataFilesTest.java,
-	tool.uart/src/test/resources/datafiles/uart_8bit_5_115200bps.ols: 
+	tool.uart/src/test/resources/datafiles/uart_8bit_5_115200bps.ols:
 	Fixed issue #79; baudrate override should be possible when the
 	acquired data doesn't provide reliable analysis possible.
 
 2011-11-11  JaWi <j.w.janssen@lxtreme.nl>
 
 	*
-	test.util/src/main/java/nl/lxtreme/ols/test/data/DataTestUtils.java: 
+	test.util/src/main/java/nl/lxtreme/ols/test/data/DataTestUtils.java:
 	Small performance issue fixed.
 
 2011-11-11  JaWi <j.w.janssen@lxtreme.nl>
 
-	* api/src/main/java/nl/lxtreme/ols/api/data/ChannelAnnotations.java: 
+	* api/src/main/java/nl/lxtreme/ols/api/data/ChannelAnnotations.java:
 	Fixed possible ConcurrentModificationException.
 
 2011-11-11  JaWi <j.w.janssen@lxtreme.nl>
@@ -557,7 +557,7 @@
 	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnection.java,
 	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java,
 	rxtx/src/main/java/nl/lxtreme/rxtx/SerialPortOptions.java,
-	rxtx/src/test/java/nl/lxtreme/rxtx/SerialPortOptionsTest.java: 
+	rxtx/src/test/java/nl/lxtreme/rxtx/SerialPortOptionsTest.java:
 	Testing purejavacomm as serial implementation as it appears to be a
 	good candidate for replacing RXTX...
 
@@ -632,7 +632,7 @@
 	util/src/main/java/nl/lxtreme/ols/util/HostUtils.java,
 	util/src/main/java/nl/lxtreme/ols/util/osgi/BundleServiceObserver.j
 	ava,
-	util/src/main/java/nl/lxtreme/ols/util/osgi/WhiteboardHelper.java: 
+	util/src/main/java/nl/lxtreme/ols/util/osgi/WhiteboardHelper.java:
 	Moved the data acquisition service to a seperate JAR; refactored how
 	tools/devices and exporters are registered. Instead of keeping an
 	administration of those, the menu is built dynamically upon each
@@ -948,7 +948,7 @@
 
 	* rxtx/pom.xml,
 	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnection.java,
-	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java: 
+	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java:
 	Temporarily reverted back to original RXTX library, as nrjavaserial
 	causes high loads on OSX after a capture.
 
@@ -1041,7 +1041,7 @@
 2011-04-15  JaWi <j.w.janssen@lxtreme.nl>
 
 	* ols.distribution/app-bundle.xml, ols.distribution/pom.xml,
-	ols.distribution/src/main/resources/Info.plist.template, pom.xml: 
+	ols.distribution/src/main/resources/Info.plist.template, pom.xml:
 	Fixed the OSX distribution build.
 
 2011-04-15  JaWi <j.w.janssen@lxtreme.nl>
@@ -1142,13 +1142,13 @@
 2011-04-12  J.W. Janssen <j.w.janssen@lxtreme.nl>
 
 	* client/pom.xml,
-	client/src/main/java/nl/lxtreme/ols/client/ClientController.java: 
+	client/src/main/java/nl/lxtreme/ols/client/ClientController.java:
 	Bumped version number; minor fix for ClientController.
 
 2011-04-12  J.W. Janssen <j.w.janssen@lxtreme.nl>
 
 	* api/pom.xml,
-	api/src/main/java/nl/lxtreme/ols/api/ui/ComponentProvider.java: 
+	api/src/main/java/nl/lxtreme/ols/api/ui/ComponentProvider.java:
 	Bumped version number; added some additional JavaDoc to
 	ComponentProvider for clarity.
 
@@ -1173,7 +1173,7 @@
 	client/src/main/java/nl/lxtreme/ols/client/Host.java,
 	client/src/main/java/nl/lxtreme/ols/client/osgi/ComponentProviderTr
 	acker.java,
-	client/src/main/java/nl/lxtreme/ols/client/osgi/MenuTracker.java: 
+	client/src/main/java/nl/lxtreme/ols/client/osgi/MenuTracker.java:
 	Brought the ComponentProvider functionality up to date with the
 	current functionality. ComponentProviders can be used (currently) to
 	add new menu's + functionality to the client.
@@ -1184,7 +1184,7 @@
 
 2011-04-09  JaWi <j.w.janssen@lxtreme.nl>
 
-	* api/src/main/java/nl/lxtreme/ols/api/ui/ComponentProvider.java: 
+	* api/src/main/java/nl/lxtreme/ols/api/ui/ComponentProvider.java:
 	Added some additional JavaDoc on the ComponentProvider API.
 
 2011-04-09  JaWi <j.w.janssen@lxtreme.nl>
@@ -1276,7 +1276,7 @@
 2011-04-06  J.W. Janssen <j.w.janssen@lxtreme.nl>
 
 	* test.util/src/main/java/nl/lxtreme/ols/test/UnitTestUtils.java,
-	test.util/src/main/java/nl/lxtreme/ols/test/data/DataTestUtils.java: 
+	test.util/src/main/java/nl/lxtreme/ols/test/data/DataTestUtils.java:
 	Added some unit test utility methods.
 
 2011-04-06  J.W. Janssen <j.w.janssen@lxtreme.nl>
@@ -1316,7 +1316,7 @@
 	cyMeasureWorker.java,
 	tool.measure/src/test/java/nl/lxtreme/ols/tool/measure/ClockFrequen
 	cyMeasureWorkerTest.java,
-	util/src/main/java/nl/lxtreme/ols/util/analysis/Frequency.java: 
+	util/src/main/java/nl/lxtreme/ols/util/analysis/Frequency.java:
 	Improved measurement tool a bit, measuring the period directly.
 
 2011-04-04  JaWi <j.w.janssen@lxtreme.nl>
@@ -1721,7 +1721,7 @@
 	util/src/test/java/nl/lxtreme/ols/util/NumberUtilsTest.java,
 	util/src/test/java/nl/lxtreme/ols/util/StringUtilsTest.java,
 	util/src/test/java/nl/lxtreme/ols/util/analysis/FrequencyTest.java,
-	util/src/test/java/nl/lxtreme/ols/util/osgi/ManifestHeaderTest.java: 
+	util/src/test/java/nl/lxtreme/ols/util/osgi/ManifestHeaderTest.java:
 	Merge with latest changes of 0.9.4 branch.
 
 2011-04-04  JaWi <j.w.janssen@lxtreme.nl>
@@ -2128,7 +2128,7 @@
 	util/src/test/java/nl/lxtreme/ols/util/NumberUtilsTest.java,
 	util/src/test/java/nl/lxtreme/ols/util/StringUtilsTest.java,
 	util/src/test/java/nl/lxtreme/ols/util/analysis/FrequencyTest.java,
-	util/src/test/java/nl/lxtreme/ols/util/osgi/ManifestHeaderTest.java: 
+	util/src/test/java/nl/lxtreme/ols/util/osgi/ManifestHeaderTest.java:
 	Updated copyright message.
 
 2011-04-04  J.W. Janssen <j.w.janssen@lxtreme.nl>
@@ -2145,7 +2145,7 @@
 
 	*
 	test.util/src/main/java/nl/lxtreme/ols/test/data/DataTestUtils.java
-	, util/src/main/java/nl/lxtreme/ols/util/analysis/Frequency.java: 
+	, util/src/main/java/nl/lxtreme/ols/util/analysis/Frequency.java:
 	Added some convenience methods.
 
 2011-04-04  J.W. Janssen <j.w.janssen@lxtreme.nl>
@@ -2224,7 +2224,7 @@
 
 	*
 	tool.i2c/src/test/java/nl/lxtreme/ols/tool/i2c/I2CAnalyserWorkerDat
-	aFilesTest.java, tool.i2c/src/test/resources/datafiles/i2c_3.ols: 
+	aFilesTest.java, tool.i2c/src/test/resources/datafiles/i2c_3.ols:
 	Fixed failing test.
 
 2011-03-24  J.W. Janssen <j.w.janssen@lxtreme.nl>
@@ -2236,7 +2236,7 @@
 
 2011-03-24  J.W. Janssen <j.w.janssen@lxtreme.nl>
 
-	* client/src/main/java/nl/lxtreme/ols/client/ClientController.java: 
+	* client/src/main/java/nl/lxtreme/ols/client/ClientController.java:
 	Simplified some of the synchronization blocks.
 
 2011-03-24  J.W. Janssen <j.w.janssen@lxtreme.nl>
@@ -2254,7 +2254,7 @@
 	client/src/main/java/nl/lxtreme/ols/client/osgi/MenuTracker.java,
 	client/src/main/java/nl/lxtreme/ols/client/osgi/PreferenceServiceTr
 	acker.java,
-	client/src/main/java/nl/lxtreme/ols/client/osgi/ToolTracker.java: 
+	client/src/main/java/nl/lxtreme/ols/client/osgi/ToolTracker.java:
 	Some cleanups: - OSGi service trackers are more fail-safe now, and delegate as   much of their work to the client controller; - some other clean ups in logging and stuff.
 
 2011-03-18  J.W. Janssen <j.w.janssen@lxtreme.nl>
@@ -2289,7 +2289,7 @@
 
 2011-03-15  J.W. Janssen <j.w.janssen@lxtreme.nl>
 
-	* ols.distribution/src/main/profiles/ols.profile-ols.cfg: 
+	* ols.distribution/src/main/profiles/ols.profile-ols.cfg:
 	Temporarily removed 8k & 16k capture sizes in order to avoid
 	problems with 24-bit captures, see also issue #50
 
@@ -2309,7 +2309,7 @@
 
 2011-03-13  J.W. Janssen <j.w.janssen@lxtreme.nl>
 
-	* rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java: 
+	* rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java:
 	Be more resilient in case the port is already in use, but we're
 	already the owner...
 
@@ -2443,7 +2443,7 @@
 
 2011-03-10  J.W. Janssen <j.w.janssen@lxtreme.nl>
 
-	* rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java: 
+	* rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java:
 	Reverted previous fix for deferred RXTX initialization, as it
 	appears to cause more problems than it fixes...
 
@@ -2477,7 +2477,7 @@
 
 2011-03-07  JaWi <j.w.janssen@lxtreme.nl>
 
-	* rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java: 
+	* rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java:
 	Deferred the initialization of the RXTX library to the latest moment
 	possible.
 
@@ -2549,7 +2549,7 @@
 
 2011-03-06  JaWi <j.w.janssen@lxtreme.nl>
 
-	* ols.distribution/src/main/profiles/ols.profile-buspirate.cfg: 
+	* ols.distribution/src/main/profiles/ols.profile-buspirate.cfg:
 	Increased the open port delay a bit to get more reliable connects.
 
 2011-03-06  JaWi <j.w.janssen@lxtreme.nl>
@@ -2591,7 +2591,7 @@
 
 2011-03-06  JaWi <j.w.janssen@lxtreme.nl>
 
-	* client/src/main/java/nl/lxtreme/ols/client/ClientController.java: 
+	* client/src/main/java/nl/lxtreme/ols/client/ClientController.java:
 	Fixed a small bug with the conversion of the preferences into the
 	user settings causing the project to be marked as changed, which is
 	incorrect.
@@ -2846,7 +2846,7 @@
 	util/src/main/java/nl/lxtreme/ols/util/swing/SwingComponentUtils.ja
 	va,
 	util/src/main/java/nl/lxtreme/ols/util/swing/component/StackLayout.
-	java, util/src/test/java/nl/lxtreme/ols/util/HostUtilsTest.java: 
+	java, util/src/test/java/nl/lxtreme/ols/util/HostUtilsTest.java:
 	Code cleanup; resolved several FindBugs issues, performed several
 	cleanups and tidied up the action initialization code. Also added
 	convenience methods to create a channel selector.
@@ -2871,7 +2871,7 @@
 2011-03-05  JaWi <j.w.janssen@lxtreme.nl>
 
 	*
-	test.util/src/main/java/nl/lxtreme/ols/test/data/DataTestUtils.java: 
+	test.util/src/main/java/nl/lxtreme/ols/test/data/DataTestUtils.java:
 	Boxing issues fixed
 
 2011-03-04  J.W. Janssen <j.w.janssen@lxtreme.nl>
@@ -2904,7 +2904,7 @@
 	client/src/test/java/nl/lxtreme/ols/client/data/project/SimpleProje
 	ctManagerTest.java,
 	test.util/src/main/java/nl/lxtreme/ols/test/Ensure.java,
-	test.util/src/main/java/nl/lxtreme/ols/test/data/DataTestUtils.java: 
+	test.util/src/main/java/nl/lxtreme/ols/test/data/DataTestUtils.java:
 	Added several other tests for the client.
 
 2011-03-03  J.W. Janssen <j.w.janssen@lxtreme.nl>
@@ -2947,7 +2947,7 @@
 2011-02-28  JaWi <j.w.janssen@lxtreme.nl>
 
 	*
-	test.util/src/main/java/nl/lxtreme/ols/test/data/DataTestUtils.java: 
+	test.util/src/main/java/nl/lxtreme/ols/test/data/DataTestUtils.java:
 	Fixed autoboxing issue.
 
 2011-02-28  JaWi <j.w.janssen@lxtreme.nl>
@@ -3047,7 +3047,7 @@
 	elperTest.java,
 	export.vcd/src/test/java/nl/lxtreme/ols/export/vcd/ValueChangeDumpT
 	imeBaseTest.java,
-	test.util/src/main/java/nl/lxtreme/ols/test/data/DataTestUtils.java: 
+	test.util/src/main/java/nl/lxtreme/ols/test/data/DataTestUtils.java:
 	Fixed issue #4; all channels are dumped in VCD exports. Added
 	several JUnits to keep an eye on regression.
 
@@ -3203,7 +3203,7 @@
 
 	* client/src/main/java/nl/lxtreme/ols/client/MainFrame.java,
 	client/src/main/java/nl/lxtreme/ols/client/icons/IconFactory.java,
-	client/src/main/java/nl/lxtreme/ols/client/icons/IconLocator.java: 
+	client/src/main/java/nl/lxtreme/ols/client/icons/IconLocator.java:
 	Added various icons made by pppd.
 
 2011-02-21  JaWi <j.w.janssen@lxtreme.nl>
@@ -3341,7 +3341,7 @@
 	.java,
 	client/src/main/java/nl/lxtreme/ols/client/action/GotoNthCursorActi
 	on.java,
-	client/src/main/java/nl/lxtreme/ols/client/icons/IconLocator.java: 
+	client/src/main/java/nl/lxtreme/ols/client/icons/IconLocator.java:
 	generalize GotoCursor*Actions by creating GotoNthCursorAction
 
 2011-02-19  Stefan Tauner <stefan.tauner@student.tuwien.ac.at>
@@ -3381,7 +3381,7 @@
 	tool.jtag/src/main/java/nl/lxtreme/ols/tool/jtag/JTAGDataSet.java,
 	tool.jtag/src/main/java/nl/lxtreme/ols/tool/jtag/JTAGProtocolAnalys
 	isDialog.java,
-	tool.jtag/src/main/java/nl/lxtreme/ols/tool/jtag/JTAGState.java: 
+	tool.jtag/src/main/java/nl/lxtreme/ols/tool/jtag/JTAGState.java:
 	Some cleanups in the JTAG decoder tool; introduced enum to keep
 	track of the various states.
 
@@ -3583,7 +3583,7 @@
 
 2011-02-16  J.W. Janssen <j.w.janssen@lxtreme.nl>
 
-	* tool.spi/src/test/java/nl/lxtreme/ols/tool/spi/ProjectImpl.java: 
+	* tool.spi/src/test/java/nl/lxtreme/ols/tool/spi/ProjectImpl.java:
 	Added missing project file.
 
 2011-02-16  J.W. Janssen <j.w.janssen@lxtreme.nl>
@@ -3602,7 +3602,7 @@
 	tool.uart/src/test/java/nl/lxtreme/ols/tool/uart/UARTAnalyserWorker
 	DataFilesTest.java,
 	tool.uart/src/test/java/nl/lxtreme/ols/tool/uart/UARTAnalyserWorker
-	Test.java, tool.uart/src/test/resources/datafiles/uart_8bit_2.ols: 
+	Test.java, tool.uart/src/test/resources/datafiles/uart_8bit_2.ols:
 	Added another test for UART decoder. Make use of parameterized
 	JUnits in order to test the various data files.
 
@@ -3641,7 +3641,7 @@
 	isDialog.java,
 	tool.uart/src/test/java/nl/lxtreme/ols/tool/uart/ProjectImpl.java,
 	tool.uart/src/test/java/nl/lxtreme/ols/tool/uart/UARTAnalyserWorker
-	Test.java, tool.uart/src/test/resources/datafiles/uart_8bit_1.ols: 
+	Test.java, tool.uart/src/test/resources/datafiles/uart_8bit_1.ols:
 	Moved OlsDataHelper to api to make it reusable for other tests.
 	Maybe we should craft a 'common-test' project instead...
 
@@ -3681,7 +3681,7 @@
 2011-02-14  J.W Janssen <jawi@Quintor-JW.(none)>
 
 	* pom.xml, rxtx/pom.xml,
-	rxtx/src/test/java/nl/lxtreme/rxtx/SerialConnectionFactoryTest.java: 
+	rxtx/src/test/java/nl/lxtreme/rxtx/SerialConnectionFactoryTest.java:
 	Added RXTX binaries for SunOS/Solaris; thanks to Alan Burlison for
 	this effort.
 
@@ -3696,7 +3696,7 @@
 2011-02-13  JaWi <j.w.janssen@lxtreme.nl>
 
 	*
-	rxtx/src/test/java/nl/lxtreme/rxtx/SerialConnectionFactoryTest.java: 
+	rxtx/src/test/java/nl/lxtreme/rxtx/SerialConnectionFactoryTest.java:
 	Temporarily ignore test due to incorrect functionality of used
 	Pax-Exam library.
 
@@ -3713,7 +3713,7 @@
 2011-02-12  JaWi <j.w.janssen@lxtreme.nl>
 
 	* rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java,
-	rxtx/src/test/java/nl/lxtreme/rxtx/SerialConnectionFactoryTest.java: 
+	rxtx/src/test/java/nl/lxtreme/rxtx/SerialConnectionFactoryTest.java:
 	Fixed failing RXTX JUnits.
 
 2011-02-11  JaWi <j.w.janssen@lxtreme.nl>
@@ -3772,12 +3772,12 @@
 
 2011-02-10  JaWi <j.w.janssen@lxtreme.nl>
 
-	* client/src/main/java/nl/lxtreme/ols/client/ClientController.java: 
+	* client/src/main/java/nl/lxtreme/ols/client/ClientController.java:
 	Let the client actions reflect the state of the current project.
 
 2011-02-10  JaWi <j.w.janssen@lxtreme.nl>
 
-	* tool.uart/src/main/java/nl/lxtreme/ols/tool/uart/UARTDataSet.java: 
+	* tool.uart/src/main/java/nl/lxtreme/ols/tool/uart/UARTDataSet.java:
 	Fixed a small bug in the baudrate calculation when the baudrate was
 	exact 4800/9600/...
 
@@ -3788,7 +3788,7 @@
 2011-02-10  JaWi <j.w.janssen@lxtreme.nl>
 
 	*
-	rxtx/src/test/java/nl/lxtreme/rxtx/SerialConnectionFactoryTest.java: 
+	rxtx/src/test/java/nl/lxtreme/rxtx/SerialConnectionFactoryTest.java:
 	Disabled the exception handling.
 
 2011-02-10  JaWi <j.w.janssen@lxtreme.nl>
@@ -3820,7 +3820,7 @@
 	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java,
 	rxtx/src/test/java/nl/lxtreme/rxtx/CommPortUtilsTest.java,
 	rxtx/src/test/java/nl/lxtreme/rxtx/SerialConnectionFactoryTest.java
-	, rxtx/src/test/java/nl/lxtreme/rxtx/SerialPortOptionsTest.java: 
+	, rxtx/src/test/java/nl/lxtreme/rxtx/SerialPortOptionsTest.java:
 	Added some JUnit tests for RxTx library.
 
 2011-02-10  unknown <Quintor@.(none)>
@@ -3861,7 +3861,7 @@
 	ols.distribution/app-bundle.xml, pom.xml,
 	runner/src/main/java/nl/lxtreme/ols/runner/Runner.java,
 	rxtx/src/main/java/nl/lxtreme/rxtx/CommPortUtils.java,
-	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java: 
+	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java:
 	Fixed several severe bugs in the runner, RxTx initialization,
 	startup scripts and OSX disk image causing all kinds of nasty
 	crashes.
@@ -3879,7 +3879,7 @@
 	tool.jtag/src/main/java/nl/lxtreme/ols/tool/jtag/JTAGData.java,
 	tool.jtag/src/main/java/nl/lxtreme/ols/tool/jtag/JTAGDataSet.java,
 	tool.jtag/src/main/java/nl/lxtreme/ols/tool/jtag/JTAGProtocolAnalys
-	isDialog.java, util/src/test/java/nl/lxtreme/ols/util/Ensure.java: 
+	isDialog.java, util/src/test/java/nl/lxtreme/ols/util/Ensure.java:
 	Fix CRLF
 
 2011-02-06  JaWi <j.w.janssen@lxtreme.nl>
@@ -3903,14 +3903,14 @@
 
 2011-02-06  JaWi <j.w.janssen@lxtreme.nl>
 
-	* rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java: 
+	* rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java:
 	Minor formatting update.
 
 2011-02-06  JaWi <j.w.janssen@lxtreme.nl>
 
 	* rxtx/pom.xml,
 	rxtx/src/main/java/nl/lxtreme/rxtx/CommPortUtils.java,
-	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java: 
+	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java:
 	Fixed device enumeration on Linux hosts. Thanks to frankalicious for
 	reporting.
 
@@ -3925,7 +3925,7 @@
 
 	* rxtx/pom.xml,
 	rxtx/src/main/java/nl/lxtreme/rxtx/CommPortUtils.java,
-	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java: 
+	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java:
 	Fixed device enumeration on Linux hosts. Thanks to frankalicious for
 	reporting.
 
@@ -4118,13 +4118,13 @@
 
 	* rxtx/src/main/java/nl/lxtreme/rxtx/CommPortUtils.java,
 	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnection.java,
-	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java: 
+	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java:
 	Fixed several crashes when using RxTx on Windows platforms.
 
 2011-01-30  JaWi <j.w.janssen@lxtreme.nl>
 
 	* rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnection.java,
-	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java: 
+	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java:
 	Rewrote port initialization routines of SerialConnectionFactory as
 	described in
 
@@ -4254,7 +4254,7 @@
 	util/src/main/java/nl/lxtreme/ols/util/swing/validation/NumberValid
 	ator.java,
 	util/src/test/java/nl/lxtreme/ols/util/BitFiddlingTest.java,
-	util/src/test/java/nl/lxtreme/ols/util/analysis/FrequencyTest.java: 
+	util/src/test/java/nl/lxtreme/ols/util/analysis/FrequencyTest.java:
 	Added support for clearing all cursors in one shot, restore cursors
 	after loading project/data file.
 
@@ -4433,7 +4433,7 @@
 
 2011-01-16  JaWi <j.w.janssen@lxtreme.nl>
 
-	* client/src/main/java/nl/lxtreme/ols/client/BundlesDialog.java: 
+	* client/src/main/java/nl/lxtreme/ols/client/BundlesDialog.java:
 	Show copyright message of bundles in bundle view dialog.
 
 2011-01-16  JaWi <j.w.janssen@lxtreme.nl>
@@ -4509,7 +4509,7 @@
 2011-01-10  JaWi <j.w.janssen@lxtreme.nl>
 
 	* api/src/main/java/nl/lxtreme/ols/api/data/Sample.java,
-	api/src/main/java/nl/lxtreme/ols/api/devices/CaptureCallback.java: 
+	api/src/main/java/nl/lxtreme/ols/api/devices/CaptureCallback.java:
 	Extended API a bit (prepaaration for future work).
 
 2011-01-08  JaWi <j.w.janssen@lxtreme.nl>
@@ -4554,7 +4554,7 @@
 
 2011-01-08  JaWi <j.w.janssen@lxtreme.nl>
 
-	* client/src/main/java/nl/lxtreme/ols/client/icons/IconFactory.java: 
+	* client/src/main/java/nl/lxtreme/ols/client/icons/IconFactory.java:
 	Small compiler warning fixed.
 
 2011-01-08  JaWi <j.w.janssen@lxtreme.nl>
@@ -4594,7 +4594,7 @@
 
 	* api/ols.mediawiki,
 	api/src/main/java/nl/lxtreme/ols/api/devices/DeviceMetadata.java,
-	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java: 
+	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java:
 	Added description of the OLS datafile format. Some other small
 	updates (comments related).
 
@@ -4626,7 +4626,7 @@
 
 	* client/src/main/java/nl/lxtreme/ols/client/Host.java,
 	client/src/main/java/nl/lxtreme/ols/client/osgi/PreferenceServiceTr
-	acker.java, runner/src/main/java/nl/lxtreme/ols/runner/Runner.java: 
+	acker.java, runner/src/main/java/nl/lxtreme/ols/runner/Runner.java:
 	Fixed a bug in the runner causing the client to not function when it
 	is installed on a path with spaces. Thanks to jone for reporting
 	this. Minor fix in the teardown of the client causing spurious
@@ -4675,7 +4675,7 @@
 
 	* ols.distribution/run.bat, ols.distribution/run.sh,
 	util/src/main/java/nl/lxtreme/ols/util/HostUtils.java,
-	util/src/main/java/nl/lxtreme/ols/util/swing/SpringLayoutUtils.java: 
+	util/src/main/java/nl/lxtreme/ols/util/swing/SpringLayoutUtils.java:
 	Minor UI-related fixes; use better color for separators on Linux and
 	Windows.
 
@@ -4703,13 +4703,13 @@
 	*
 	device.logicsniffer/src/main/java/org/sump/device/logicsniffer/Logi
 	cSnifferDevice.java,
-	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java: 
+	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java:
 	Some small bugfixes.
 
 2011-01-04  J.W. Janssen <j.w.janssen@lxtreme.nl>
 
 	* rxtx/src/main/java/nl/lxtreme/rxtx/CommPortUtils.java,
-	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java: 
+	rxtx/src/main/java/nl/lxtreme/rxtx/SerialConnectionFactory.java:
 	Minor cleanups.
 
 2011-01-04  J.W. Janssen <j.w.janssen@lxtreme.nl>
@@ -4862,7 +4862,7 @@
 	util/src/main/java/nl/lxtreme/ols/util/osgi/ManifestHeader.java,
 	util/src/main/java/nl/lxtreme/ols/util/osgi/RegExManifestScanner.ja
 	va, util/src/test/java/nl/lxtreme/ols/util/Ensure.java,
-	util/src/test/java/nl/lxtreme/ols/util/osgi/ManifestHeaderTest.java: 
+	util/src/test/java/nl/lxtreme/ols/util/osgi/ManifestHeaderTest.java:
 	Implemented extender service and rewrote all tools, devices and
 	exporters to make use of this service. This simplifies the way new
 	tools/devices/exporters are to be written.
@@ -4957,7 +4957,7 @@
 
 2010-12-28  JaWi <j.w.janssen@lxtreme.nl>
 
-	* tool.uart/src/main/java/nl/lxtreme/ols/tool/uart/UARTDataSet.java: 
+	* tool.uart/src/main/java/nl/lxtreme/ols/tool/uart/UARTDataSet.java:
 	Too eager baudrate calculation, the rates were a bit off. Should
 	work a bit more reliable now.
 
@@ -4978,13 +4978,13 @@
 	client/src/main/java/nl/lxtreme/ols/client/action/ShowBundlesAction
 	.java, ols.distribution/README, ols.distribution/pom.xml, pom.xml,
 	runner/pom.xml,
-	tool.uart/src/main/java/nl/lxtreme/ols/tool/uart/UARTDataSet.java: 
+	tool.uart/src/main/java/nl/lxtreme/ols/tool/uart/UARTDataSet.java:
 	Added dialog for displaying the OSGi bundle states, handy for
 	debugging.
 
 2010-12-19  JaWi <j.w.janssen@lxtreme.nl>
 
-	* ChangeLog, ols.distribution/src/site/main/index.html, pom.xml: 
+	* ChangeLog, ols.distribution/src/site/main/index.html, pom.xml:
 	Release of version 0.9.2
 
 2010-12-19  JaWi <j.w.janssen@lxtreme.nl>
@@ -5072,7 +5072,7 @@
 
 	* export.svg/pom.xml,
 	export.svg/src/main/java/nl/lxtreme/ols/export/svg/Activator.java,
-	export.svg/src/main/java/nl/lxtreme/ols/export/svg/SVGExporter.java: 
+	export.svg/src/main/java/nl/lxtreme/ols/export/svg/SVGExporter.java:
 	Added sample for exporting diagrams to SVG.
 
 2010-11-21  JaWi <j.w.janssen@lxtreme.nl>
@@ -5248,7 +5248,7 @@
 	export.vcd/src/main/java/nl/lxtreme/ols/export/vcd/ValueChangeDumpE
 	xporter.java, ols.distribution/pom.xml, pom.xml,
 	tool.measure/src/main/java/nl/lxtreme/ols/tool/measure/MeasurementT
-	ool.java, util/src/main/java/nl/lxtreme/ols/util/ExportUtils.java: 
+	ool.java, util/src/main/java/nl/lxtreme/ols/util/ExportUtils.java:
 	Fixed export to image problems on Linux & Windows; some minor
 	updates.
 
@@ -5373,7 +5373,7 @@
 	util/src/main/java/nl/lxtreme/ols/util/analysis/Frequency.java,
 	util/src/main/java/nl/lxtreme/ols/util/swing/component/EnumItemRend
 	erer.java,
-	util/src/test/java/nl/lxtreme/ols/util/analysis/FrequencyTest.java: 
+	util/src/test/java/nl/lxtreme/ols/util/analysis/FrequencyTest.java:
 	Added common analysis utility for creating a frequency distribution
 	map (useful for determining bit lenghts and such). Fixed some bugs
 	in the SPI decoder tool causing CS detection to fail. Added a
@@ -5482,7 +5482,7 @@
 	export.vcd/src/main/java/nl/lxtreme/ols/export/vcd/ValueChangeDumpH
 	elper.java,
 	util/src/main/java/nl/lxtreme/ols/util/DisplayUtils.java,
-	util/src/test/java/nl/lxtreme/ols/util/DisplayUtilsTest.java: 
+	util/src/test/java/nl/lxtreme/ols/util/DisplayUtilsTest.java:
 	Started implementation of VCD exporter.
 
 2010-10-06  JaWi <j.w.janssen@lxtreme.nl>
@@ -5615,7 +5615,7 @@
 2010-09-30  JaWi <j.w.janssen@lxtreme.nl>
 
 	*
-	util/src/main/java/nl/lxtreme/ols/util/swing/SpringLayoutUtils.java: 
+	util/src/main/java/nl/lxtreme/ols/util/swing/SpringLayoutUtils.java:
 	Minor fix for separators on Mac OSX.
 
 2010-09-30  JaWi <j.w.janssen@lxtreme.nl>
@@ -5760,7 +5760,7 @@
 	ialog.java,
 	tool.uart/src/main/java/nl/lxtreme/ols/tool/uart/UARTProtocolAnalys
 	isDialog.java,
-	util/src/main/java/nl/lxtreme/ols/util/swing/SpringLayoutUtils.java: 
+	util/src/main/java/nl/lxtreme/ols/util/swing/SpringLayoutUtils.java:
 	Made the configuration dialogs of several tools a bit more modern;
 	visual cleanup of several dialog (once again); added mnemonic keys
 	for menu bar.
@@ -5888,7 +5888,7 @@
 	client/src/main/java/nl/lxtreme/ols/client/action/NewProjectAction.
 	java,
 	client/src/main/java/nl/lxtreme/ols/client/osgi/PreferenceServiceTr
-	acker.java, runner/src/main/java/nl/lxtreme/ols/runner/Runner.java: 
+	acker.java, runner/src/main/java/nl/lxtreme/ols/runner/Runner.java:
 	Fixed a small bug regarding the restoring of (window) preferences
 	when opening a dialog _after_ a project was loaded.  Made the
 	cleanup of temporary storage used by Felix a debug option.
@@ -6151,7 +6151,7 @@
 
 2010-09-07  JaWi <j.w.janssen@lxtreme.nl>
 
-	* client/src/main/java/nl/lxtreme/ols/client/ClientController.java: 
+	* client/src/main/java/nl/lxtreme/ols/client/ClientController.java:
 	Do not zoom-to-fit when running an tool-analysis; simply repaint
 	will suffice.
 
@@ -6250,12 +6250,12 @@
 	va,
 	tool.uart/src/main/java/nl/lxtreme/ols/tool/uart/UARTAnalyserWorker
 	.java,
-	tool.uart/src/main/java/nl/lxtreme/ols/tool/uart/UARTDataSet.java: 
+	tool.uart/src/main/java/nl/lxtreme/ols/tool/uart/UARTDataSet.java:
 	Small updates regarding tool context.
 
 2010-09-05  JaWi <j.w.janssen@lxtreme.nl>
 
-	* client/src/main/java/nl/lxtreme/ols/client/signal/Diagram.java: 
+	* client/src/main/java/nl/lxtreme/ols/client/signal/Diagram.java:
 	Make use of the new Java functionality to display a context menu.
 
 2010-09-05  JaWi <j.w.janssen@lxtreme.nl>
@@ -6433,7 +6433,7 @@
 	tool.uart/src/main/java/nl/lxtreme/ols/tool/uart/UARTDataSet.java,
 	tool.uart/src/main/java/nl/lxtreme/ols/tool/uart/UARTProtocolAnalys
 	isDialog.java,
-	tool.uart/src/main/java/nl/lxtreme/ols/tool/uart/UARTStopBits.java: 
+	tool.uart/src/main/java/nl/lxtreme/ols/tool/uart/UARTStopBits.java:
 	Reworked the analysis tools to integrate the report-data and
 	annotations. Currently, the report data contains the same
 	information as would be needed for the annotations. Also reworked
@@ -6442,7 +6442,7 @@
 
 2010-09-03  JaWi <j.w.janssen@lxtreme.nl>
 
-	* client/src/main/java/nl/lxtreme/ols/client/signal/Diagram.java: 
+	* client/src/main/java/nl/lxtreme/ols/client/signal/Diagram.java:
 	Implemented a 'new' algorithm to keep the correct center position
 	while zooming in. Works almost ok, has some issues with zooming out;
 	is ok for now.
@@ -6658,12 +6658,12 @@
 
 2010-08-30  JaWi <j.w.janssen@lxtreme.nl>
 
-	* client/src/main/java/nl/lxtreme/ols/client/signal/Diagram.java: 
+	* client/src/main/java/nl/lxtreme/ols/client/signal/Diagram.java:
 	Cleanup; (temporarily) reverted to original color scheme.
 
 2010-08-30  JaWi <j.w.janssen@lxtreme.nl>
 
-	* client/src/main/java/nl/lxtreme/ols/client/signal/Diagram.java: 
+	* client/src/main/java/nl/lxtreme/ols/client/signal/Diagram.java:
 	Experimental gradient painting of annotated data (eye candy!).
 
 2010-08-30  JaWi <j.w.janssen@lxtreme.nl>
@@ -6702,7 +6702,7 @@
 
 2010-08-30  J.W. Janssen <j.w.janssen@lxtreme.nl>
 
-	* client/src/main/java/nl/lxtreme/ols/client/signal/Diagram.java: 
+	* client/src/main/java/nl/lxtreme/ols/client/signal/Diagram.java:
 	Make sure annotations appear in the correct channel.
 
 2010-08-30  J.W. Janssen <j.w.janssen@lxtreme.nl>
@@ -6911,7 +6911,7 @@
 	* api/src/main/java/nl/lxtreme/ols/api/data/AnnotatedData.java,
 	api/src/main/java/nl/lxtreme/ols/api/data/ChannelAnnotation.java,
 	api/src/main/java/nl/lxtreme/ols/api/data/ChannelAnnotations.java,
-	client/src/main/java/nl/lxtreme/ols/client/signal/Diagram.java: 
+	client/src/main/java/nl/lxtreme/ols/client/signal/Diagram.java:
 	Performance improvement, don't draw all annotations but only those
 	that are really visible.
 
@@ -6928,13 +6928,13 @@
 
 	* api/src/main/java/nl/lxtreme/ols/api/data/AnnotatedData.java,
 	api/src/main/java/nl/lxtreme/ols/api/data/ChannelAnnotations.java,
-	client/src/main/java/nl/lxtreme/ols/client/signal/Diagram.java: 
+	client/src/main/java/nl/lxtreme/ols/client/signal/Diagram.java:
 	Added hover support for annotations; hovering over an annotation
 	will cause the tooltip to display the annotation.
 
 2010-08-21  JaWi <j.w.janssen@lxtreme.nl>
 
-	* logging/src/main/java/nl/lxtreme/ols/logging/JdkLogForwarder.java: 
+	* logging/src/main/java/nl/lxtreme/ols/logging/JdkLogForwarder.java:
 	Added support for MessageFormat-like arguments, as is supported by
 	the JDK logger.
 
@@ -7150,7 +7150,7 @@
 
 2010-08-14  JaWi <j.w.janssen@lxtreme.nl>
 
-	* util/src/test/java/nl/lxtreme/ols/util/ExportUtilsTest.java: 
+	* util/src/test/java/nl/lxtreme/ols/util/ExportUtilsTest.java:
 	Missing code header added.
 
 2010-08-14  JaWi <j.w.janssen@lxtreme.nl>
@@ -7191,7 +7191,7 @@
 	util/src/main/java/nl/lxtreme/ols/util/export/NullMacroResolver.jav
 	a, util/src/main/java/nl/lxtreme/ols/util/export/TagElement.java,
 	util/src/main/java/nl/lxtreme/ols/util/export/TextElement.java,
-	util/src/test/java/nl/lxtreme/ols/util/ExportUtilsTest.java: 
+	util/src/test/java/nl/lxtreme/ols/util/ExportUtilsTest.java:
 	Reworked the HTML exporting functionality in the same way as was
 	done for the CSV exporter: now a utility class is used to generate
 	the HTML output. All tools that exported to HTML were rewritten to
@@ -7199,7 +7199,7 @@
 
 2010-08-12  JaWi <j.w.janssen@lxtreme.nl>
 
-	* util/src/main/java/nl/lxtreme/ols/util/ExportUtils.java: 
+	* util/src/main/java/nl/lxtreme/ols/util/ExportUtils.java:
 	Documentation update.
 
 2010-08-12  JaWi <j.w.janssen@lxtreme.nl>
@@ -7419,7 +7419,7 @@
 	.java,
 	tool.uart/src/main/java/nl/lxtreme/ols/tool/uart/UARTDataSet.java,
 	tool.uart/src/main/java/nl/lxtreme/ols/tool/uart/UARTParity.java,
-	tool.uart/src/main/java/nl/lxtreme/ols/tool/uart/UARTStopBits.java: 
+	tool.uart/src/main/java/nl/lxtreme/ols/tool/uart/UARTStopBits.java:
 	Rewrote all tools to be asynchronous (those that were not already
 	asynchronous)
 
@@ -7511,7 +7511,7 @@
 	util/src/main/java/nl/lxtreme/ols/util/swing/SpringLayoutUtils.java
 	, util/src/main/java/nl/lxtreme/ols/util/swing/StdFileFilter.java,
 	util/src/main/java/nl/lxtreme/ols/util/swing/SwingComponentUtils.ja
-	va, util/src/test/java/nl/lxtreme/ols/util/NumberUtilsTest.java: 
+	va, util/src/test/java/nl/lxtreme/ols/util/NumberUtilsTest.java:
 	Rewrote all tools to be asynchronous (those that were not already
 	asynchronous)
 
@@ -7596,7 +7596,7 @@
 
 2010-08-07  JaWi <j.w.janssen@lxtreme.nl>
 
-	* ols.distribution/pom.xml, ols.distribution/run.bat, pom.xml: 
+	* ols.distribution/pom.xml, ols.distribution/run.bat, pom.xml:
 	Version bumps; small update on the run script for Windows hosts.
 
 2010-08-07  JaWi <j.w.janssen@lxtreme.nl>
@@ -7735,7 +7735,7 @@
 
 	*
 	client/src/main/java/nl/lxtreme/ols/client/signal/DiagramTimeLine.j
-	ava, runner/src/main/java/nl/lxtreme/ols/runner/Runner.java: 
+	ava, runner/src/main/java/nl/lxtreme/ols/runner/Runner.java:
 	Cleanup; make use of DisplayUtils class for displaying time
 	component.
 

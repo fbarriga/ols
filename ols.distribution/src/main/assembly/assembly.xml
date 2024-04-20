@@ -33,6 +33,8 @@
                 <include>org.apache.felix:org.apache.felix.metatype</include>
 				<include>org.apache.felix:org.apache.felix.prefs</include>
 				<include>org.apache.felix:org.apache.felix.dependencymanager</include>
+				<include>nl.lxtreme.ols:lib.jserialcomm</include>
+				<include>nl.lxtreme.ols:lib.jvt220</include>
 				<include>nl.lxtreme.ols:lib.mydoggy</include>
 				<include>nl.lxtreme.ols:api</include>
 				<include>nl.lxtreme.ols:client</include>
@@ -43,7 +45,6 @@
 				<include>nl.lxtreme.ols:service.io</include>
 				<include>nl.lxtreme.ols:service.taskexecution</include>
 				<include>nl.lxtreme.ols:util</include>
-				<include>nl.lxtreme.ols:org.rxtx</include>
 				<include>nl.lxtreme.ols.device:test</include>
 				<include>nl.lxtreme.ols.device:generic</include>
 				<include>nl.lxtreme.ols.device:logicsniffer</include>
@@ -111,6 +112,7 @@
 			<useDefaultExcludes>true</useDefaultExcludes>
 			<includes>
 				<include>run.sh</include>
+				<include>run-debug.sh</include>
 			</includes>
 			<lineEnding>unix</lineEnding>
 			<directoryMode>0755</directoryMode>

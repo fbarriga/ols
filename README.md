@@ -1,95 +1,101 @@
 # OpenBench LogicSniffer
 
-![OpenBench LogicSniffer](http://s1.directupload.net/images/140913/bca9sg2g.png "Screenshot of ols")
+OpenBench LogicSniffer (*ols*) is a cross-platform, GUI Java client 
+for [Open Bench Logic Sniffer] but supports other devices.
 
-This is the public [Git][git] repository for the OpenBench LogicSniffer (*ols*
-for short) written by J.W. Janssen. It is an alternative client for an open
-source [logic analyzer](https://en.wikipedia.org/wiki/Logic_analyzer) called
-the [Open Bench Logic Sniffer](http://dangerousprototypes.com/docs/Open_Bench_Logic_Sniffer).
-Refer to this [page](https://lxtreme.nl/projects/ols/) for more information about the
-project.
+This repository has been forked from [jawi/ols].
 
-## FEATURES
+This fork's goal is to update the client just enough to make it work on modern systems.
 
-The alternative Java client provides the following features:
+## SUPPORTED PLATFORMS
 
-- Cross platform: The client runs on Mac OS X (32/64-bit), Windows (32/64 bit),
-  Linux (32/64 bit) and Solaris (32 bit)
+### Tested
 
-- Simple installation: No longer fiddling with the serial libraries (RXTX) in
-  order to get the client up and running. The client embeds the suitable serial
-  libraries for several operating systems
+- MacOS Sonoma 14.3 - Silicon / OpenJDK 18
+- MacOS Ventura 13.6 - Intel / OpenJDK 19
+- Fedora 34 - x86_64 / OpenJDK 18 / X.Org 1.20.14
+- Windows 11 64-bit x86 / JDK 22
 
-- Pluggable: Adding new functionality on the fly is possible and as easy as
-  copying files to a single directory
+### Not tested
 
-- Looks and feels good: The client has a good look and feel, aiming at being as
-  usable as possible and adhering to the human interface guidelines of the
-  platform it is running on.
+- Solaris
+- FreeBSD
+- OpenBSD
 
-## DOCUMENTATION
+## SUPPORTED DEVICES
 
-All documentation is maintained in the [wiki](https://github.com/jawi/ols/wiki).
+### Tested
+
+- [Open Bench Logic Sniffer]
+- [BusPirate]
+
+### Not tested
+
+- Original SUMP device
+- [LogicPirate] (both 40 and 60MHz variants)
+- [LogicShrimp]
+- [USB IRToy]
+- [Arduino + Arduino Mega Logic Analyser]
+- [Pipistrello] (serial-based only).
+
+## SCREENSHOTS
+[<img src="docs/screenshots/main_measurements.png" alt="Main Measurements" width="500"/>](docs/screenshots/main_measurements.png)
+[<img src="docs/screenshots/main_acquisition_details_darcula.png" alt="Acquisition Details Darcula Theme" width="500"/>](docs/screenshots/main_acquisition_details_darcula.png)
+[<img src="docs/screenshots/i2c_analysis.png" alt="i2c Analysis" width="500"/>](docs/screenshots/i2c_analysis.png)
+[<img src="docs/screenshots/available_tools.png" alt="Available Tools" width="500"/>](docs/screenshots/available_tools.png)
+
+[<img src="docs/screenshots/capture_settings_connection.png" alt="Capture Settings Connection" width="300"/>](docs/screenshots/capture_settings_connection.png)
+[<img src="docs/screenshots/capture_settings_acquisition.png" alt="Capture Settings Acquisition" width="300"/>](docs/screenshots/capture_settings_acquisition.png)
+[<img src="docs/screenshots/capture_settings_triggers.png" alt="Capture Settings Triggers" width="300"/>](docs/screenshots/capture_settings_triggers.png)
+[<img src="docs/screenshots/capture_settings_devices.png" alt="Capture Settings Supported Devices" width="300"/>](docs/screenshots/capture_settings_devices.png)
+[<img src="docs/screenshots/preferences.png" alt="Preferences" width="200"/>](docs/screenshots/preferences.png)
+
+## LINKS
+
+To access documentation (bearing in mind it may be outdated), please refer to the following links:
+- https://lxtreme.nl/projects/ols/
+- https://github.com/jawi/ols
+- https://github.com/jawi/ols/blob/master/README.md
+- https://github.com/jawi/ols/wiki
+
 
 ## COMPILING THE SOURCES
 
-In case you are interested in cloning this repository and compile it for
-yourself, you should do the following:
+### Prerequisites
 
-  $ git clone http://github.com/jawi/ols.git
+- JDK 17+
+- Maven 3.9.x
 
-For compiling the sources, you need to have at least a valid JDK (1.6+) and
-[Maven][maven] installed. For developing, I recommend
-[Eclipse][eclipse] as development environment.
+### Compiling
 
-  $ cd ols/
-  $ mvn clean install
+```shell
+$ cd ols
+$ mvn clean install package
+```
 
-After this, you should find the latest binary ZIP or tarball in
+After this, you should find the latest binary ZIP and tarball in
 `ols.distribution/target`.
 
-## DEVELOPING FOR OLS
+### Compiling on MacOS
 
-Developing for ols can be done with any *modern* IDE, like [Eclipse][eclipse],
-[Netbeans][netbeans], or even [Emacs][emacs]. Keep in mind that IDE-specific
-stuff is not committed to the repository as this would clutter it unnecessarily.
+```shell
+$ brew install maven
+$ cd ols
+$ export createDMG=1
+$ mvn clean install package
+```
 
-Keep in mind that your IDE should provide support for [Maven][maven], otherwise
-it most probably will not compile out of the box. In addition, you probably
-want support for [Git][git] in your IDE as well. To create the needed project
-files for [Eclipse][eclipse], for example, you can use the following
-[Maven][maven] command:
+After this, you should find the latest binary ZIP, tarball, DMG and .app in
+`ols.distribution/target`.
 
-  $ mvn eclipse:eclipse
 
-There are similar commands for other IDEs. See the [Maven][maven] site for more
-details on this.
+## DEVELOPMENT
 
-Some notes for [Eclipe][eclipse]: After having imported the projects into your
-workspace, you might need to enable [Maven][maven] support by hand. Simply
-select all projects, right click on them and choose
-`Enable Dependency Management` from the [Maven][maven] menu should be
-sufficient. For running the OLS client in [Eclipse][eclipse], you can make use
-of the launch configurations found in the `eclipse/` subdirectory of the OLS
-repository. The code formatting rules and cleanup rules can be found there, too.
+### Setup IntelliJ IDEA
 
-## CONTRIBUTIONS
+[<img src="docs/intellij.png" alt="IntelliJ Setup" width="500"/>](docs/intellij.png)
 
-Drop me a line if you want to contribute code to the OLS repository. If needed
-I can give you write-access to the GitHub or apply your patch directly.
 
-## CONTACT
-
-You can reach me at: `j dot w dot janssen at lxtreme.nl`
-
-## DONATIONS
-
-You can support and encourage further development of this project through the
-following means:
-
-[![Flattr This!](http://api.flattr.com/button/flattr-badge-large.png "Flattr This!")](https://flattr.com/thing/61272/OpenBench-LogicSniffer-alternative-Java-Client)
-
-[![Bountysource](https://d2bbtvgnhux6eq.cloudfront.net/assets/Bountysource-green-712770df4397a3bc6f5b56b90402763c.png "Bountysource logo")](https://www.bountysource.com/trackers/315759-jawi-ols)
 
 ## LICENSE
 
@@ -108,9 +114,12 @@ following means:
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-[eclipse]: https://www.eclipse.org/
-[maven]: https://maven.apache.org/
-[netbeans]: https://netbeans.org/
-[emacs]: https://www.gnu.org/software/emacs/
-[git]: http://git-scm.com/
 
+[jawi/ols]: https://github.com/jawi/ols
+[Open Bench Logic Sniffer]: http://dangerousprototypes.com/docs/Open_Bench_Logic_Sniffer
+[BusPirate]: http://dangerousprototypes.com/docs/Bus_Pirate
+[LogicPirate]: http://dangerousprototypes.com/docs/Logic_Pirate
+[LogicShrimp]: http://dangerousprototypes.com/docs/Logic_Shrimp_logic_analyzer
+[USB IRToy]: http://dangerousprototypes.com/docs/USB_Infrared_Toy
+[Arduino + Arduino Mega Logic Analyser]: https://github.com/gillham/logic_analyzer
+[Pipistrello]: https://web.archive.org/web/20231207021513/pipistrello.saanlima.com/index.php?title=Welcome_to_Pipistrello

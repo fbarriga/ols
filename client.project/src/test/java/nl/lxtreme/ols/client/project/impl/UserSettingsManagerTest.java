@@ -5,7 +5,6 @@ package nl.lxtreme.ols.client.project.impl;
 
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 import java.io.*;
 import java.util.*;
@@ -16,7 +15,6 @@ import nl.lxtreme.ols.test.data.project.*;
 import nl.lxtreme.ols.util.*;
 
 import org.junit.*;
-import org.osgi.service.log.*;
 
 
 /**
@@ -32,16 +30,11 @@ public class UserSettingsManagerTest
 
   // METHODS
 
-  /**
-   * @throws java.lang.Exception
-   */
   @Before
-  public void setUp() throws Exception
-  {
+  public void setUp() {
     this.project = new StubTestProject();
     this.baseFolder = new File( System.getProperty( "java.io.tmpdir" ) );
     this.userSettingsManager = new UserSettingsManagerImpl();
-    this.userSettingsManager.setLog( mock( LogService.class ) );
   }
 
   /**

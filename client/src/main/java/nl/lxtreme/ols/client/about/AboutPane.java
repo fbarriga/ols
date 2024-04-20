@@ -17,6 +17,7 @@
  *
  * Copyright (C) 2006-2010 Michael Poppitz, www.sump.org
  * Copyright (C) 2010 J.W. Janssen, www.lxtreme.nl
+ * Copyright (C) 2024 - Felipe Barriga Richards, http://github.com/fbarriga/ols
  */
 package nl.lxtreme.ols.client.about;
 
@@ -41,11 +42,13 @@ final class AboutPane extends JPanel
   private static final String ABOUT_MESSAGE = //
   "<html><body><h3>%s</h3>" //
       + "<p>\u00A9 Copyright 2006-2010 Michael Poppitz<br>" //
-      + "\u00A9 Copyright 2010-2013 J.W. Janssen<br><br></p>" //
+      + "\u00A9 Copyright 2010-2013 J.W. Janssen<br>" //
+      + "\u00A9 Copyright 2024 Felipe Barriga Richards<br><br></p>" //
       + "<p>This software is released under the GNU GPLv2 license.<br><br></p>" //
       + "<p>Version: %s<br><br></p>" //
       + "<p>For more information see:</p>" //
       + "<ul>" //
+      + "<li><a href='https://github.com/fbarriga/ols'>https://github.com/fbarriga/ols</a>;</li>" //
       + "<li><a href='http://ols.lxtreme.nl/'>http://ols.lxtreme.nl</a>;</li>" //
       + "<li><a href='https://github.com/jawi/ols/wiki/FAQ'>https://github.com/jawi/ols/wiki/FAQ</a>;</li>" //
       + "<li><a href='http://dangerousprototypes.com/open-logic-sniffer'>http://dangerousprototypes.com/open-logic-sniffer</a>;</li>" //

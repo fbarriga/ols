@@ -44,6 +44,9 @@
 							<goal>jar</goal>
 						</goals>
 						<phase>process-resources</phase>
+						<configuration>
+							<release>11</release>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

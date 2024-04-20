@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 # Simple check to see whether the "magic" Java binary is available on our path;
 java -version 1>/dev/null 2>&1
@@ -44,6 +44,12 @@ classpath="$basedir/bin/*"
 # give the client roughly 1gigabyte of memory
 memsettings=-Xmx1024m
 
-java $platformOpts $memsettings -Djna.nosys=true -cp "$classpath" nl.lxtreme.ols.runner.Runner -pluginDir="$plugindir" "$@"
+
+#JDK_JAVA_OPTIONS=--add-opens java.desktop/javax.swing.plaf.basic=ALL-UNNAMED
+
+java $platformOpts $memsettings -Djna.nosys=true \
+  -Djava.library.path="$basedir/bin/" \
+  -cp "$classpath" nl.lxtreme.ols.runner.Runner \
+  -pluginDir="$plugindir" "$@"
 
 ###EOF###

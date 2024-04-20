@@ -287,51 +287,33 @@ public class BackgroundDataAcquisitionService implements DataAcquisitionService,
     }
   }
 
-  /**
-   * @param result
-   */
   void fireAcquisitionCompleteEvent( final AcquisitionResult result )
   {
-    final Iterator<AcquisitionDataListener> dataListenerIter = this.acquisitionDataListeners.iterator();
-    while ( dataListenerIter.hasNext() )
-    {
-      dataListenerIter.next().acquisitionComplete( result );
-    }
+    LOG.fine( "Acquisition completed: result=" + result );
+      for (AcquisitionDataListener acquisitionDataListener : this.acquisitionDataListeners) {
+          acquisitionDataListener.acquisitionComplete(result);
+      }
   }
 
-  /**
-   * @param status
-   */
   void fireAcquisitionEndedEvent( final AcquisitionResultStatus status )
   {
-    final Iterator<AcquisitionStatusListener> statusListenerIter = this.acquisitionStatusListeners.iterator();
-    while ( statusListenerIter.hasNext() )
-    {
-      statusListenerIter.next().acquisitionEnded( status );
-    }
+    LOG.fine( "Acquisition ended: status=" + status );
+      for (AcquisitionStatusListener acquisitionStatusListener : this.acquisitionStatusListeners) {
+          acquisitionStatusListener.acquisitionEnded(status);
+      }
   }
 
-  /**
-   * @param aPercentage
-   */
   void fireAcquisitionInProgressEvent( final int aPercentage )
   {
-    Iterator<AcquisitionProgressListener> iter = this.acquisitionProgressListeners.iterator();
-    while ( iter.hasNext() )
-    {
-      iter.next().acquisitionInProgress( aPercentage );
-    }
+      for (AcquisitionProgressListener acquisitionProgressListener : this.acquisitionProgressListeners) {
+          acquisitionProgressListener.acquisitionInProgress(aPercentage);
+      }
   }
 
-  /**
-   * @param status
-   */
   void fireAcquisitionStartedEvent()
   {
-    final Iterator<AcquisitionStatusListener> statusListenerIter = this.acquisitionStatusListeners.iterator();
-    while ( statusListenerIter.hasNext() )
-    {
-      statusListenerIter.next().acquisitionStarted();
-    }
+      for (AcquisitionStatusListener acquisitionStatusListener : this.acquisitionStatusListeners) {
+          acquisitionStatusListener.acquisitionStarted();
+      }
   }
 }
