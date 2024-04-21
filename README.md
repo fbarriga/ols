@@ -1,3 +1,14 @@
+[![CI Status](https://github.com/fbarriga/ols/workflows/CI/badge.svg)](https://github.com/fbarriga/ols/actions)
+[![GitHub Actions Build Status](https://img.shields.io/github/actions/workflow/status/fbarriga/ols/release.yml)](https://github.com/fbarriga/ols/actions/workflows/release.yml?query=workflow%3A%22Create+Release%22)
+[![GitHub license](https://img.shields.io/github/license/fbarriga/ols.svg)](https://github.com/fbarriga/ols/blob/main/LICENSE)
+[![GitHub contributors](https://img.shields.io/github/contributors/fbarriga/ols.svg)](https://github.com/fbarriga/ols/graphs/contributors/)
+[![GitHub issues](https://img.shields.io/github/issues/fbarriga/ols.svg)](https://github.com/fbarriga/ols/issues/)
+[![GitHub pull-requests](https://img.shields.io/github/issues-pr/fbarriga/ols.svg)](https://github.com/fbarriga/ols/pulls/)
+
+[![GitHub watchers](https://img.shields.io/github/watchers/fbarriga/ols.svg?style=social&label=Watch)](https://github.com/fbarriga/ols/watchers/)
+[![GitHub forks](https://img.shields.io/github/forks/fbarriga/ols.svg?style=social&label=Fork)](https://github.com/fbarriga/ols/network/)
+[![GitHub stars](https://img.shields.io/github/stars/fbarriga/ols.svg?style=social&label=Star)](https://github.com/fbarriga/ols/stargazers/)
+
 # OpenBench LogicSniffer
 
 OpenBench LogicSniffer (*ols*) is a cross-platform, GUI Java client 
