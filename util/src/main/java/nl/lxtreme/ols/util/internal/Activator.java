@@ -66,9 +66,6 @@ public class Activator extends DependencyActivatorBase
             .setCallbacks( "setPlatformCallback", "removePlatformCallback" ).setRequired( false ) ) );
   }
 
-  /**
-   * @param aContext
-   */
   private void logEnvironment( final HostProperties aProperties )
   {
     final String name = aProperties.getShortName();

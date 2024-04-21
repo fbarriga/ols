@@ -934,7 +934,7 @@ public final class MainFrame extends JFrame implements Closeable, PropertyChange
   public void showAboutBox()
   {
     final HostProperties hostProperties = this.controller.getHostProperties();
-    final AboutBox aboutDialog = new AboutBox( hostProperties.getShortName(), hostProperties.getVersion() );
+    final AboutBox aboutDialog = new AboutBox( hostProperties.getShortName(), hostProperties.getVersion(), hostProperties.getJvmVersion() );
     aboutDialog.showDialog();
   }
 

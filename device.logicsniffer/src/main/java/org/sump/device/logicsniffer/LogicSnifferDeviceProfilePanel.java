@@ -226,7 +226,7 @@ public abstract class LogicSnifferDeviceProfilePanel implements Configurable
      */
     public ShowDeviceMetadataAction()
     {
-      super( "Show device metadata" );
+      super( "Detect Device" );
       putValue( Action.LONG_DESCRIPTION, "Returns the results of the 'metadata' command." );
     }
 
@@ -252,7 +252,7 @@ public abstract class LogicSnifferDeviceProfilePanel implements Configurable
   // VARIABLES
 
   JButton showMetadataButton;
-  private JComboBox deviceTypeSelect;
+  private JComboBox<DeviceProfile> deviceTypeSelect;
   private JEditorPane deviceTypeDetails;
 
   // CONSTANTS
@@ -382,9 +382,6 @@ public abstract class LogicSnifferDeviceProfilePanel implements Configurable
     }
   }
 
-  /**
-   * @return
-   */
   protected abstract String getConnectionURI();
 
   /**
@@ -393,28 +390,16 @@ public abstract class LogicSnifferDeviceProfilePanel implements Configurable
    */
   protected abstract void updateDeviceProfile( final DeviceProfile aProfile );
 
-  /**
-   * @param aMetadata
-   * @return
-   */
   private String getEmtpyMetadataDetails()
   {
     return getMetadataDetailsAsText( new EmptyDeviceMetadata() );
   }
 
-  /**
-   * @param aMetadata
-   * @return
-   */
   private String getErrorMetadataDetails( final IOException exception )
   {
     return String.format( ERROR_TMPL, exception.getMessage() );
   }
 
-  /**
-   * @param aMetadata
-   * @return
-   */
   private String getMetadataDetailsAsText( final DeviceMetadata aMetadata )
   {
     String header1 = "Device type", text1 = "-";
@@ -457,7 +442,7 @@ public abstract class LogicSnifferDeviceProfilePanel implements Configurable
 
     // NOTE: create this component as last component, as it will fire an event
     // that uses all other components!!!
-    this.deviceTypeSelect = new JComboBox( new DeviceProfileTypeComboBoxModel( this.device.getDeviceProfileManager() ) );
+    this.deviceTypeSelect = new JComboBox<DeviceProfile>( new DeviceProfileTypeComboBoxModel( this.device.getDeviceProfileManager() ) );
 
     this.deviceTypeSelect.setRenderer( new DeviceProfileTypeComboBoxRenderer() );
     this.deviceTypeSelect.addActionListener( new ActionListener()
@@ -465,7 +450,7 @@ public abstract class LogicSnifferDeviceProfilePanel implements Configurable
       @Override
       public void actionPerformed( final ActionEvent aEvent )
       {
-        final JComboBox combobox = ( JComboBox )aEvent.getSource();
+        final JComboBox<DeviceProfile> combobox = ( JComboBox )aEvent.getSource();
         final DeviceProfile profile = ( DeviceProfile )combobox.getSelectedItem();
         updateDeviceProfile( profile );
       }

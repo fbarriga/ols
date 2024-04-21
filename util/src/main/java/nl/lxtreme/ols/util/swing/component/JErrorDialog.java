@@ -50,6 +50,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import nl.lxtreme.ols.util.HostInfo;
 import nl.lxtreme.ols.util.HostUtils;
 import nl.lxtreme.ols.util.swing.StandardActionFactory;
 import nl.lxtreme.ols.util.swing.StandardActionFactory.CloseAction.Closeable;
@@ -400,6 +401,8 @@ public class JErrorDialog extends JDialog implements Closeable
       final Window owner = SwingComponentUtils.getCurrentWindow();
       final IncidentInfo incident = new IncidentInfo( "Uncaught exception...", //
           "<html><b>Something unexpected happened!</b><br><br>"
+              + "<b>Exception</b><br><pre>" + aException.getClass().getName() + "</pre><br>"
+              + "<b>Exception Message</b><br><tt>" + aException.getMessage() + "</tt><br><br>"
               + "Click on \"more details\" for more information about the possible cause.<br><br>"
               + "If the problem persists, please report it as bug.</html>", "", aException );
 

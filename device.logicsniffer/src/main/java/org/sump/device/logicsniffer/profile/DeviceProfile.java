@@ -268,13 +268,13 @@ public final class DeviceProfile implements Cloneable, Comparable<DeviceProfile>
   {
     final String rawValue = this.properties.get( DEVICE_CAPTURESIZES );
     final String[] values = rawValue.split( ",\\s*" );
-    final List<Integer> result = new ArrayList<Integer>();
+    final List<Integer> result = new ArrayList<>();
     for ( String value : values )
     {
       result.add( Integer.valueOf( value.trim() ) );
     }
-    Collections.sort( result, NumberUtils.<Integer> createNumberComparator( false /* aSortAscending */) );
-    return result.toArray( new Integer[result.size()] );
+    result.sort(NumberUtils.createNumberComparator(false /* aSortAscending */));
+    return result.toArray(new Integer[0]);
   }
 
   /**
@@ -357,7 +357,7 @@ public final class DeviceProfile implements Cloneable, Comparable<DeviceProfile>
 
   /**
    * Returns the clockspeed used in the divider calculation.
-   * 
+   *
    * @return a clockspeed, in Hertz (Hz), defaults to 100MHz.
    */
   public int getDividerClockspeed()
@@ -629,17 +629,22 @@ public final class DeviceProfile implements Cloneable, Comparable<DeviceProfile>
    * {@inheritDoc}
    */
   @Override
-  public String toString()
-  {
-    return getType();
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("DeviceProfile Properties:\n");
+    for (var e : properties.entrySet()) {
+      sb.append("  ").append(e.getKey()).append(": ").append(e.getValue()).append("\n");
+    }
+
+    return sb.toString();
   }
 
   /**
    * @return the properties of this device profile, never <code>null</code>.
    */
-  final Dictionary<String, String> getProperties()
+  Dictionary<String, String> getProperties()
   {
-    return new Hashtable<String, String>( this.properties );
+    return new Hashtable<>(this.properties);
   }
 
   /**
@@ -647,7 +652,7 @@ public final class DeviceProfile implements Cloneable, Comparable<DeviceProfile>
    *          the updated properties.
    */
   @SuppressWarnings( "rawtypes" )
-  final void setProperties( final Dictionary aProperties )
+  void setProperties(final Dictionary aProperties)
   {
     final Map<String, String> newProps = new HashMap<String, String>();
 

@@ -20,6 +20,8 @@ import static org.osgi.service.log.LogService.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import nl.lxtreme.ols.config.provision.*;
 
@@ -42,10 +44,10 @@ public class ConfiguratorImpl implements Configurator
   public static final String KEY_CONFIG_DIR = "nl.lxtreme.ols.config.dir";
 
   // VARIABLES
+  private static final Logger LOG = Logger.getLogger( ConfiguratorImpl.class.getName() );
 
   // Injected by Felix DM...
   private volatile ConfigurationAdmin configAdmin;
-  private volatile LogService log;
 
   private final ConfigFileRepository repository;
 
@@ -82,11 +84,11 @@ public class ConfiguratorImpl implements Configurator
   @Override
   public boolean provision( final File file ) throws IOException
   {
-    this.log.log( LOG_INFO, "Installing configuration from \"" + file.getName() + "\"..." );
+    LOG.info( "Installing configuration from \"" + file.getName() + "\"..." );
 
     ConfigFileResource resource = new ConfigFileResource( file );
 
-    this.log.log( LOG_INFO, "Provisioning configuration \"" + resource.getId() + "\"..." );
+    LOG.info( "Provisioning configuration \"" + resource.getId() + "\"..." );
 
     return provision( resource );
   }
@@ -112,7 +114,7 @@ public class ConfiguratorImpl implements Configurator
         {
           firstException = exception;
         }
-        this.log.log( LOG_WARNING, "Failed to provision \"" + file.getName() + "\" as configuration...", exception );
+        LOG.log(Level.WARNING, "Failed to provision \"" + file.getName() + "\" as configuration...", exception );
       }
     }
 
@@ -170,11 +172,6 @@ public class ConfiguratorImpl implements Configurator
     this.configAdmin = configAdmin;
   }
 
-  protected void setLogService( final LogService log )
-  {
-    this.log = log;
-  }
-
   private File getConfigDirectory( final BundleContext context ) throws IOException
   {
     String dir = context.getProperty( KEY_CONFIG_DIR );
@@ -199,7 +196,7 @@ public class ConfiguratorImpl implements Configurator
   {
     if ( !dir.exists() )
     {
-      this.log.log( LOG_WARNING, "Configuration directory \"" + dir + "\" does not exist!" );
+      LOG.warning( "Configuration directory \"" + dir + "\" does not exist!" );
       return new File[0];
     }
     return dir.listFiles( new FilenameFilter()
@@ -225,20 +222,20 @@ public class ConfiguratorImpl implements Configurator
       String generatedPid = this.repository.getConfigurationPid( resource );
       if ( generatedPid == null )
       {
-        this.log.log( LOG_DEBUG, "Creating new configuration for \"" + factoryPID + "\" (not found in repository)..." );
+        LOG.fine( "Creating new configuration for \"" + factoryPID + "\" (not found in repository)..." );
         // See OSGi compendium r4.2.0, section 114.4.1...
         configuration = this.configAdmin.createFactoryConfiguration( factoryPID, null );
       }
       else
       {
-        this.log.log( LOG_DEBUG, "Obtaining configuration for \"" + generatedPid + "\" (found in repository)..." );
+        LOG.fine( "Obtaining configuration for \"" + generatedPid + "\" (found in repository)..." );
         // See OSGi compendium r4.2.0, section 114.4.1...
         configuration = this.configAdmin.getConfiguration( generatedPid, null );
       }
     }
     else
     {
-      this.log.log( LOG_DEBUG, "Obtaining configuration for \"" + pid + "\" (maybe found in repository)..." );
+      LOG.fine( "Obtaining configuration for \"" + pid + "\" (maybe found in repository)..." );
       // See OSGi compendium r4.2.0, section 114.4.1...
       configuration = this.configAdmin.getConfiguration( pid, null );
     }
@@ -247,7 +244,7 @@ public class ConfiguratorImpl implements Configurator
     {
       if ( this.repository.add( configuration, resource ) )
       {
-        this.log.log( LOG_INFO, "Provisioned new configuration: " + resource.getId() );
+        LOG.info( "Provisioned new configuration: " + resource.getId() );
 
         configuration.update( props );
 

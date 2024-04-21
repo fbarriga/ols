@@ -39,11 +39,7 @@ final class ConfigDialogHelper
 {
   // METHODS
 
-  /**
-   * @param aComboBox
-   * @return
-   */
-  static String getComboBoxText( final JComboBox aComboBox )
+  static String getComboBoxText( final JComboBox<?> aComboBox )
   {
     if ( aComboBox == null )
     {
@@ -61,11 +57,7 @@ final class ConfigDialogHelper
     return String.valueOf( value );
   }
 
-  /**
-   * @param aComboBox
-   * @return
-   */
-  static Integer getNumericValue( final JComboBox aTextField )
+  static Integer getNumericValue( final JComboBox<?> aTextField )
   {
     if ( aTextField == null )
     {
@@ -76,13 +68,9 @@ final class ConfigDialogHelper
     {
       return null;
     }
-    return Integer.valueOf( NumberUtils.smartParseInt( String.valueOf( value ) ) );
+    return NumberUtils.smartParseInt(String.valueOf(value));
   }
 
-  /**
-   * @param aComboBox
-   * @return
-   */
   static Integer getNumericValue( final JTextField aTextField )
   {
     if ( aTextField == null )
@@ -94,30 +82,21 @@ final class ConfigDialogHelper
     {
       return null;
     }
-    return Integer.valueOf( NumberUtils.smartParseInt( value ) );
+    return NumberUtils.smartParseInt(value);
   }
 
-  /**
-   * @param <T>
-   * @param aComboBox
-   * @param aValues
-   */
-  static void updateCaptureSpeedComboBoxModel( final JComboBox aComboBox, final DeviceProfile aProfile )
+  static void updateCaptureSpeedComboBoxModel( final JComboBox<Vector<Integer>> aComboBox, final DeviceProfile aProfile )
   {
-    Vector<Integer> sampleRates = new Vector<Integer>( Arrays.asList( aProfile.getSampleRates() ) );
+    Vector<Integer> sampleRates = new Vector<>(Arrays.asList(aProfile.getSampleRates()));
     if ( aProfile.isDoubleDataRateSupported() )
     {
       // assume the sample rates are ordered in reverse order, so adding it at
       // the beginning should be fine...
-      sampleRates.add( 0, Integer.valueOf( 2 * aProfile.getClockspeed() ) );
+      sampleRates.add( 0, 2 * aProfile.getClockspeed());
     }
     updateComboBoxModel( aComboBox, sampleRates );
   }
 
-  /**
-   * @param aChannelGroups
-   * @param aProfile
-   */
   static void updateChannelGroups( final JCheckBox[] aChannelGroups, final DeviceProfile aProfile )
   {
     assert aChannelGroups != null : "Channel groups cannot be null!";
@@ -144,31 +123,16 @@ final class ConfigDialogHelper
     aCheckBox.setEnabled( aEnabled );
   }
 
-  /**
-   * @param <T>
-   * @param aComboBox
-   * @param aValues
-   */
-  static <T> void updateComboBoxModel( final JComboBox aComboBox, final T... aValues )
+  static <T> void updateComboBoxModel( final JComboBox<T> aComboBox, final T[] aValues)
   {
-    aComboBox.setModel( new DefaultComboBoxModel( aValues ) );
+    aComboBox.setModel( new DefaultComboBoxModel<>( aValues ) );
   }
 
-  /**
-   * @param <T>
-   * @param aComboBox
-   * @param aValues
-   */
   static <T> void updateComboBoxModel( final JComboBox aComboBox, final Vector<T> aValues )
   {
-    aComboBox.setModel( new DefaultComboBoxModel( aValues ) );
+    aComboBox.setModel( new DefaultComboBoxModel<>( aValues ) );
   }
 
-  /**
-   * @param aTriggerMasks
-   * @param aTriggerValues
-   * @param aProfile
-   */
   static void updateTriggerChannels( final JCheckBox[][] aTriggerMasks, final JCheckBox[][] aTriggerValues,
       final DeviceProfile aProfile )
   {
@@ -197,12 +161,7 @@ final class ConfigDialogHelper
     }
   }
 
-  /**
-   * @param <T>
-   * @param aComboBox
-   * @param aValues
-   */
-  static void updateTriggerTypeComboBoxModel( final JComboBox aComboBox, final DeviceProfile aProfile )
+  static void updateTriggerTypeComboBoxModel( final JComboBox<TriggerType> aComboBox, final DeviceProfile aProfile )
   {
     final boolean complexTriggersSupported = aProfile.isComplexTriggersSupported();
     final TriggerType[] values;

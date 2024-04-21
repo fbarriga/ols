@@ -17,6 +17,7 @@
  *
  * Copyright (C) 2006-2010 Michael Poppitz, www.sump.org
  * Copyright (C) 2010 J.W. Janssen, www.lxtreme.nl
+ * Copyright (C) 2024 - Felipe Barriga Richards, http://github.com/fbarriga/ols
  */
 package nl.lxtreme.ols.client.about;
 
@@ -41,11 +42,14 @@ final class AboutPane extends JPanel
   private static final String ABOUT_MESSAGE = //
   "<html><body><h3>%s</h3>" //
       + "<p>\u00A9 Copyright 2006-2010 Michael Poppitz<br>" //
-      + "\u00A9 Copyright 2010-2013 J.W. Janssen<br><br></p>" //
+      + "\u00A9 Copyright 2010-2013 J.W. Janssen<br>" //
+      + "\u00A9 Copyright 2024 Felipe Barriga Richards<br><br></p>" //
       + "<p>This software is released under the GNU GPLv2 license.<br><br></p>" //
       + "<p>Version: %s<br><br></p>" //
+      + "<p>JVM: %s<br><br></p>" //
       + "<p>For more information see:</p>" //
       + "<ul>" //
+      + "<li><a href='https://github.com/fbarriga/ols'>https://github.com/fbarriga/ols</a>;</li>" //
       + "<li><a href='http://ols.lxtreme.nl/'>http://ols.lxtreme.nl</a>;</li>" //
       + "<li><a href='https://github.com/jawi/ols/wiki/FAQ'>https://github.com/jawi/ols/wiki/FAQ</a>;</li>" //
       + "<li><a href='http://dangerousprototypes.com/open-logic-sniffer'>http://dangerousprototypes.com/open-logic-sniffer</a>;</li>" //
@@ -70,10 +74,10 @@ final class AboutPane extends JPanel
    * 
    * @return a new {@link AboutPane} instance, never <code>null</code>.
    */
-  public static AboutPane create( final String aName, final String aVersion )
+  public static AboutPane create( final String aName, final String aVersion, final String aJvmVersion )
   {
     AboutPane result = new AboutPane();
-    result.buildPanel( aName, aVersion );
+    result.buildPanel( aName, aVersion, aJvmVersion );
     return result;
   }
 
@@ -84,8 +88,10 @@ final class AboutPane extends JPanel
    *          the name to display;
    * @param aVersion
    *          the version to display.
+   * @param aJvmVersion
+   *          the JVM version to display.
    */
-  void buildPanel( final String aName, final String aVersion )
+  void buildPanel( final String aName, final String aVersion, final String aJvmVersion )
   {
     setBorder( BorderFactory.createEmptyBorder( 5, 5, 5, 5 ) );
 
@@ -93,7 +99,7 @@ final class AboutPane extends JPanel
     final JLabel iconLabel = new JLabel( new ImageIcon( url ) );
     iconLabel.setBackground( Color.WHITE );
 
-    final JLabel aboutMsg = new JLabel( String.format( ABOUT_MESSAGE, aName, aVersion ) );
+    final JLabel aboutMsg = new JLabel( String.format( ABOUT_MESSAGE, aName, aVersion, aJvmVersion ) );
 
     add( iconLabel, //
         new GridBagConstraints( 0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, //

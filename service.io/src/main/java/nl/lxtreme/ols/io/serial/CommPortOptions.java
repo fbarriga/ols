@@ -1,5 +1,5 @@
 /*
- * OpenBench LogicSniffer / SUMP project 
+ * OpenBench LogicSniffer / SUMP project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,17 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110, USA
  *
- * 
+ *
  * Copyright (C) 2010-2011 - J.W. Janssen, http://www.lxtreme.nl
+ * Copyright (C) 2024 - Felipe Barriga Richards, http://github.com/fbarriga/ols
  */
 package nl.lxtreme.ols.io.serial;
 
 
+import com.fazecast.jSerialComm.SerialPort;
+
 import java.util.regex.*;
 
-import purejavacomm.*;
 
 
 /**
@@ -131,7 +133,7 @@ final class CommPortOptions
 
   /**
    * Creates a new SerialPortOptions instance.
-   * 
+   *
    * @param aURI
    *          the serial port URI, cannot be <code>null</code>.
    * @throws IllegalArgumentException
@@ -148,12 +150,12 @@ final class CommPortOptions
     this.baudrate = 9600;
 
     // Default to 8 databits, no parity and 1 stopbit...
-    this.databits = SerialPort.DATABITS_8;
-    this.parityMode = SerialPort.PARITY_NONE;
-    this.stopbits = SerialPort.STOPBITS_1;
+    this.databits = 8;
+    this.parityMode = SerialPort.NO_PARITY;
+    this.stopbits = SerialPort.ONE_STOP_BIT;
 
     // Default to NO flow control...
-    this.flowControl = SerialPort.FLOWCONTROL_NONE;
+    this.flowControl = SerialPort.FLOW_CONTROL_DISABLED;
 
     // Default to blocking I/O...
     this.blocking = true;
@@ -236,9 +238,6 @@ final class CommPortOptions
     return this.stopbits;
   }
 
-  /**
-   * @return
-   */
   public boolean isBlocking()
   {
     return this.blocking;
@@ -252,10 +251,6 @@ final class CommPortOptions
     return this.dtr;
   }
 
-  /**
-   * @param aStr
-   * @return
-   */
   private int parseBaudrate( final String aStr )
   {
     int result;
@@ -270,56 +265,33 @@ final class CommPortOptions
     return result;
   }
 
-  /**
-   * @param aStr
-   * @return
-   */
   private int parseDataBits( final String aStr )
   {
-    if ( "5".equals( aStr ) )
-    {
-      return SerialPort.DATABITS_5;
+    var bits = Integer.parseInt(aStr);
+    if (bits >= 5 && bits <= 8) {
+      return bits;
+    } else {
+      return -1;
     }
-    else if ( "6".equals( aStr ) )
-    {
-      return SerialPort.DATABITS_6;
-    }
-    else if ( "7".equals( aStr ) )
-    {
-      return SerialPort.DATABITS_7;
-    }
-    else if ( "8".equals( aStr ) )
-    {
-      return SerialPort.DATABITS_8;
-    }
-    return -1;
   }
 
-  /**
-   * @param aStr
-   * @return
-   */
   private int parseFlowControl( final String aStr )
   {
     if ( "off".equals( aStr ) )
     {
-      return SerialPort.FLOWCONTROL_NONE;
+      return SerialPort.FLOW_CONTROL_DISABLED;
     }
     else if ( "xon_xoff".equals( aStr ) )
     {
-      return SerialPort.FLOWCONTROL_XONXOFF_IN;
+      return SerialPort.FLOW_CONTROL_XONXOFF_IN_ENABLED;
     }
     else if ( "rts_cts".equals( aStr ) )
     {
-      return SerialPort.FLOWCONTROL_RTSCTS_IN;
+      return SerialPort.FLOW_CONTROL_CTS_ENABLED | SerialPort.FLOW_CONTROL_RTS_ENABLED;
     }
     return -1;
   }
 
-  /**
-   * @param aStr
-   * @return
-   */
   private int parseOpenDelay( final String aStr )
   {
     int result = 0;
@@ -334,39 +306,31 @@ final class CommPortOptions
     return result;
   }
 
-  /**
-   * @param aStr
-   * @return
-   */
   private int parseParityMode( final String aStr )
   {
     if ( "even".equalsIgnoreCase( aStr ) )
     {
-      return SerialPort.PARITY_EVEN;
+      return SerialPort.EVEN_PARITY;
     }
     else if ( "mark".equalsIgnoreCase( aStr ) )
     {
-      return SerialPort.PARITY_MARK;
+      return SerialPort.MARK_PARITY;
     }
     else if ( "none".equalsIgnoreCase( aStr ) )
     {
-      return SerialPort.PARITY_NONE;
+      return SerialPort.NO_PARITY;
     }
     else if ( "odd".equalsIgnoreCase( aStr ) )
     {
-      return SerialPort.PARITY_ODD;
+      return SerialPort.ODD_PARITY;
     }
     else if ( "space".equalsIgnoreCase( aStr ) )
     {
-      return SerialPort.PARITY_SPACE;
+      return SerialPort.SPACE_PARITY;
     }
     return -1;
   }
 
-  /**
-   * @param aStr
-   * @return
-   */
   private int parseRecvTimeout( final String aStr )
   {
     int result = 100;
@@ -381,23 +345,19 @@ final class CommPortOptions
     return result;
   }
 
-  /**
-   * @param aStr
-   * @return
-   */
   private int parseStopBits( final String aStr )
   {
     if ( "1".equals( aStr ) )
     {
-      return SerialPort.STOPBITS_1;
+      return SerialPort.ONE_STOP_BIT;
     }
     else if ( "1.5".equals( aStr ) )
     {
-      return SerialPort.STOPBITS_1_5;
+      return SerialPort.ONE_POINT_FIVE_STOP_BITS;
     }
     else if ( "2".equals( aStr ) )
     {
-      return SerialPort.STOPBITS_2;
+      return SerialPort.TWO_STOP_BITS;
     }
     return -1;
   }
@@ -485,7 +445,7 @@ final class CommPortOptions
         final boolean parsedValue = "on".equalsIgnoreCase( value );
         if ( parsedValue )
         {
-          this.flowControl = SerialPort.FLOWCONTROL_RTSCTS_IN;
+          this.flowControl |= SerialPort.FLOW_CONTROL_CTS_ENABLED;
         }
       }
       else if ( "autorts".equals( key ) )
@@ -493,7 +453,7 @@ final class CommPortOptions
         final boolean parsedValue = "on".equalsIgnoreCase( value );
         if ( parsedValue )
         {
-          this.flowControl = SerialPort.FLOWCONTROL_RTSCTS_OUT;
+          this.flowControl |= SerialPort.FLOW_CONTROL_RTS_ENABLED;
         }
       }
       else if ( "dtr".equals( key ) )

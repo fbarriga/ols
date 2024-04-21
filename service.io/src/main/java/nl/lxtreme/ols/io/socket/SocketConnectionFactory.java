@@ -23,11 +23,11 @@ package nl.lxtreme.ols.io.socket;
 
 import java.io.*;
 import java.net.*;
+import java.util.logging.Logger;
 
 import javax.microedition.io.*;
 
 import org.osgi.service.io.*;
-import org.osgi.service.log.*;
 
 
 /**
@@ -44,9 +44,7 @@ public class SocketConnectionFactory implements ConnectionFactory
   public static final String SCHEME = "socket";
 
   // VARIABLES
-
-  // Injected by DependencyManager...
-  private volatile LogService logService;
+  private static final Logger LOG = Logger.getLogger( SocketConnectionFactory.class.getName() );
 
   // METHODS
 
@@ -87,8 +85,7 @@ public class SocketConnectionFactory implements ConnectionFactory
   {
     if ( aOptions.isRemoteSocket() )
     {
-      this.logService.log( LogService.LOG_DEBUG,
-          "Opening socket to " + aOptions.getAddress() + ":" + aOptions.getPort() );
+      LOG.fine("Opening socket to " + aOptions.getAddress() + ":" + aOptions.getPort() );
 
       Socket socket = new Socket( aOptions.getAddress(), aOptions.getPort() );
       socket.setSoTimeout( aOptions.getTimeout() );
@@ -96,7 +93,7 @@ public class SocketConnectionFactory implements ConnectionFactory
       return new SocketConnectionImpl( socket );
     }
 
-    this.logService.log( LogService.LOG_DEBUG, "Opening server socket on " + aOptions.getPort() );
+    LOG.fine( "Opening server socket on " + aOptions.getPort() );
 
     ServerSocket socket = new ServerSocket( aOptions.getPort() );
     socket.setSoTimeout( aOptions.getTimeout() );

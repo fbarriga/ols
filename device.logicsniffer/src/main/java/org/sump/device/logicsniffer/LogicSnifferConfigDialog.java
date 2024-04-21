@@ -28,12 +28,12 @@ import static org.sump.device.logicsniffer.ConfigDialogHelper.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-import java.util.List;
 
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.plaf.basic.*;
 
+import com.fazecast.jSerialComm.SerialPort;
 import nl.lxtreme.ols.api.*;
 import nl.lxtreme.ols.api.util.*;
 import nl.lxtreme.ols.util.*;
@@ -48,8 +48,6 @@ import org.sump.device.logicsniffer.profile.DeviceProfile.DeviceInterface;
 import org.sump.device.logicsniffer.profile.DeviceProfile.NumberingScheme;
 import org.sump.device.logicsniffer.profile.DeviceProfile.TriggerType;
 import org.sump.device.logicsniffer.protocol.*;
-
-import purejavacomm.*;
 
 
 /**
@@ -79,7 +77,7 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
         if ( enabledGroups > 0 )
         {
           int sampleRate = getSelectedSampleRate();
-          double time = ( enabledGroups != 0 ) ? size / ( sampleRate * enabledGroups ) : 0.0;
+          double time = size / ( sampleRate * enabledGroups );
 
           value = String.format( "<html>%s&nbsp;&nbsp;<span style='color:gray;font-size:0.85em;'>(%s)</span></html>",
               Unit.SizeSI.format( size ), Unit.Time.format( time ) );
@@ -209,9 +207,6 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
 
     private final JLabel label;
 
-    /**
-     * @param aListeningLabel
-     */
     public TriggerRatioChangeListener( final JLabel aListeningLabel )
     {
       this.label = aListeningLabel;
@@ -232,11 +227,6 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
       slider.setToolTipText( updateLabel( before, after ) );
     }
 
-    /**
-     * @param aBeforeRatio
-     * @param aAfterRatio
-     * @return
-     */
     private String updateLabel( final int aBeforeRatio, final int aAfterRatio )
     {
       final String ratioText = String
@@ -261,16 +251,16 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
 
   private LogicSnifferDeviceProfilePanel deviceProfilePanel;
 
-  private JComboBox connTypeSelect;
+  private JComboBox<DeviceInterface> connTypeSelect;
   private JTextField remAddress;
   private JTextField remPort;
-  private JComboBox numberSchemeSelect;
-  private JComboBox portSelect;
-  private JComboBox portRateSelect;
-  private JComboBox sourceSelect;
-  private JComboBox sizeSelect;
-  private JComboBox speedSelect;
-  private JComboBox triggerTypeSelect;
+  private JComboBox<NumberingScheme> numberSchemeSelect;
+  private JComboBox<String> portSelect;
+  private JComboBox<String> portRateSelect;
+  private JComboBox<CaptureClockSource> sourceSelect;
+  private JComboBox<Integer> sizeSelect;
+  private JComboBox<Vector<Integer>> speedSelect;
+  private JComboBox<TriggerType> triggerTypeSelect;
   private JCheckBox maxSampleSize;
   private JCheckBox testModeEnable;
   private JCheckBox filterEnable;
@@ -325,15 +315,6 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
 
   // METHODS
 
-  /**
-   * @param x
-   * @param y
-   * @param w
-   * @param h
-   * @param wx
-   * @param wy
-   * @return
-   */
   private static GridBagConstraints createConstraints( final int x, final int y, final int w, final int h,
       final double wx, final double wy )
   {
@@ -498,7 +479,7 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
   }
 
   /**
-   * @see nl.lxtreme.ols.api.Configurable#readPreferences(org.osgi.service.prefs.Preferences)
+   * @see nl.lxtreme.ols.api.Configurable#readPreferences(UserSettings)
    */
   public void readPreferences( final UserSettings aSettings )
   {
@@ -588,9 +569,6 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
     updateFields();
   }
 
-  /**
-   * @return
-   */
   public boolean showDialog()
   {
     // make sure we've got a predictable result; otherwise it causes
@@ -602,7 +580,7 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
   }
 
   /**
-   * @see nl.lxtreme.ols.api.Configurable#writePreferences(java.util.Properties)
+   * @see nl.lxtreme.ols.api.Configurable#writePreferences(UserSettings)
    */
   public void writePreferences( final UserSettings aSettings )
   {
@@ -687,7 +665,7 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
 
       if ( this.deviceProfile != null )
       {
-        Integer openDelay = Integer.valueOf( this.deviceProfile.getOpenPortDelay() );
+        int openDelay = this.deviceProfile.getOpenPortDelay();
         boolean dtrValue = this.deviceProfile.isOpenPortDtr();
 
         result = String.format( "%s;dtr=%s;delay=%d", result, ( dtrValue ? "on" : "off" ), openDelay );
@@ -772,7 +750,7 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
       String host = this.remAddress.getText();
       String port = this.remPort.getText();
 
-      mandatoryFieldsFilled = ( host != null ) && !"".equals( host ) && ( port != null ) && !"".equals( port );
+      mandatoryFieldsFilled = ( host != null ) && !host.isEmpty() && ( port != null ) && !port.isEmpty();
     }
 
     final int availableChannelGroups = getChannelGroupCount();
@@ -977,10 +955,6 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
     return result;
   }
 
-  /**
-   * @param aStage
-   * @return
-   */
   private JPanel createMaskValueEditor( final int aStage )
   {
     final JPanel maskValuePanel = new JPanel( new SpringLayout() );
@@ -990,8 +964,9 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
     maskValuePanel.add( new JLabel( " " ) );
     for ( int j = MAX_CHANNELS; j > 0; j-- )
     {
-      final String channel = ( ( j % 8 ) == 0 ) || ( ( j % 8 ) == 1 ) ? String.format( "%2d", Integer.valueOf( j - 1 ) )
-          : "";
+      final String channel = ( ( j % 8 ) == 0 ) || ( ( j % 8 ) == 1 ) ?
+              String.format( "%2d", j - 1)
+              : "";
       channelLabels[j - 1] = new JLabel( channel );
       maskValuePanel.add( channelLabels[j - 1] );
     }
@@ -1029,9 +1004,6 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
     return maskValuePanel;
   }
 
-  /**
-   * @return
-   */
   private JPanel createTriggerPane()
   {
     final JPanel generalPane = new JPanel( new SpringLayout() );
@@ -1089,7 +1061,7 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
    */
   private void forceCaptureSizeTo( final int aSampleCount )
   {
-    this.sizeSelect.setSelectedItem( Integer.valueOf( aSampleCount ) );
+    this.sizeSelect.setSelectedItem(aSampleCount);
   }
 
   /**
@@ -1139,9 +1111,6 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
     return count;
   }
 
-  /**
-   * @return
-   */
   private int getEnabledChannelGroups()
   {
     int enabledChannelGroups = 0;
@@ -1155,9 +1124,6 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
     return enabledChannelGroups;
   }
 
-  /**
-   * @return
-   */
   private int getSelectedSampleCount()
   {
     int result = determineMaxSampleCount( getEnabledChannelGroups() );
@@ -1165,7 +1131,7 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
     Integer sampleCount = getNumericValue( this.sizeSelect );
     if ( ( sampleCount != null ) && !this.maxSampleSize.isSelected() )
     {
-      result = sampleCount.intValue();
+      result = sampleCount;
     }
 
     return result;
@@ -1196,7 +1162,7 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
 
     final DeviceInterface[] devInterfaces = new DeviceInterface[] { DeviceInterface.NETWORK, DeviceInterface.SERIAL };
 
-    this.connTypeSelect = new JComboBox( devInterfaces );
+    this.connTypeSelect = new JComboBox<>( devInterfaces );
     this.connTypeSelect.setRenderer( new DeviceInterfaceComboBoxRenderer() );
     this.connTypeSelect.setSelectedItem( DeviceInterface.SERIAL );
     this.connTypeSelect.addActionListener( fieldUpdater );
@@ -1207,45 +1173,34 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
     this.remPort = new JTextField( "5678" );
     this.remPort.addActionListener( fieldUpdater );
 
-    this.portSelect = new JLazyComboBox( new JLazyComboBox.ItemProvider()
+    this.portSelect = new JLazyComboBox<>( new JLazyComboBox.ItemProvider<String>()
     {
       @Override
-      @SuppressWarnings( "unchecked" )
-      public Object[] getItems()
+      public String[] getItems()
       {
-        final Enumeration<CommPortIdentifier> portIdentifiers = CommPortIdentifier.getPortIdentifiers();
-        final List<String> portList = new ArrayList<String>();
-
-        while ( portIdentifiers.hasMoreElements() )
-        {
-          CommPortIdentifier portId = portIdentifiers.nextElement();
-          if ( portId.getPortType() == CommPortIdentifier.PORT_SERIAL )
-          {
-            portList.add( portId.getName() );
-          }
-        }
-
-        return portList.toArray( new String[portList.size()] );
+        return Arrays.stream(SerialPort.getCommPorts())
+                .map(SerialPort::getSystemPortName)
+                .toArray(String[]::new);
       }
     } );
     // allow people to put their own port name into it...
     this.portSelect.setEditable( true );
     this.portSelect.addActionListener( fieldUpdater );
 
-    this.portRateSelect = new JComboBox( BAUDRATES );
+    this.portRateSelect = new JComboBox<>( BAUDRATES );
     this.portRateSelect.setEditable( true );
     this.portRateSelect.setSelectedIndex( 3 ); // 115k2
     this.portRateSelect.addActionListener( fieldUpdater );
 
-    this.numberSchemeSelect = new JComboBox();
+    this.numberSchemeSelect = new JComboBox<>();
     this.numberSchemeSelect.setRenderer( new NumberSchemeComboBoxRenderer() );
     this.numberSchemeSelect.addActionListener( fieldUpdater );
 
-    this.sourceSelect = new JComboBox();
+    this.sourceSelect = new JComboBox<>();
     this.sourceSelect.setRenderer( new ClockSourceComboBoxRenderer() );
     this.sourceSelect.addActionListener( fieldUpdater );
 
-    this.speedSelect = new JComboBox();
+    this.speedSelect = new JComboBox<>();
     this.speedSelect.setRenderer( new CaptureSpeedComboBoxRenderer() );
     this.speedSelect.addActionListener( fieldUpdater );
 
@@ -1261,7 +1216,7 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
       this.groupsPanel.add( this.channelGroup[i] );
     }
 
-    this.sizeSelect = new JComboBox();
+    this.sizeSelect = new JComboBox<>();
     this.sizeSelect.setRenderer( new BinarySizeComboBoxRenderer() );
     this.sizeSelect.addActionListener( fieldUpdater );
 
@@ -1302,7 +1257,7 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
     this.ratioSlider.setMinimumSize( size );
     this.ratioSlider.setPreferredSize( size );
 
-    this.triggerTypeSelect = new JComboBox();
+    this.triggerTypeSelect = new JComboBox<>();
     this.triggerTypeSelect.addActionListener( fieldUpdater );
 
     this.triggerStageTabs = new JTabbedPane();
@@ -1327,14 +1282,14 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
       stagePane.setBorder( BorderFactory.createEmptyBorder( 5, 5, 5, 5 ) );
 
       final String[] levels = { "Immediately", "On Level 1", "On Level 2", "On Level 3" };
-      this.triggerLevel[i] = new JComboBox( levels );
+      this.triggerLevel[i] = new JComboBox<>( levels );
       this.triggerLevel[i].setSelectedIndex( i );
 
       stagePane.add( createRightAlignedLabel( "Arm" ), createConstraints( 0, 0, 1, 1, 1.0, 1.0 ) );
       stagePane.add( this.triggerLevel[i], createConstraints( 1, 0, 1, 1, 0.5, 1.0 ) );
 
       final String[] modes = { "Parallel", "Serial" };
-      this.triggerMode[i] = new JComboBox( modes );
+      this.triggerMode[i] = new JComboBox<>( modes );
       this.triggerMode[i].setSelectedIndex( 0 );
 
       stagePane.add( createRightAlignedLabel( "Mode" ), createConstraints( 2, 0, 1, 1, 0.5, 1.0 ) );
@@ -1343,7 +1298,7 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
       this.triggerMode[i].addActionListener( fieldUpdater );
       final String[] channels = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
           "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31" };
-      this.triggerChannel[i] = new JComboBox( channels );
+      this.triggerChannel[i] = new JComboBox<>( channels );
       this.triggerChannel[i].setSelectedIndex( 0 );
 
       stagePane.add( createRightAlignedLabel( "Channel" ), createConstraints( 4, 0, 1, 1, 0.5, 1.0 ) );
@@ -1450,7 +1405,7 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
       this.triggerDelay[i].setToolTipText( "Delays trigger # samples after its condition is met." );
       stagePane.add( this.triggerDelay[i], createConstraints( 5, 6, 1, 1, 0.5, 1.0 ) );
 
-      this.triggerStageTabs.add( String.format( "Stage %d", Integer.valueOf( i + 1 ) ), stagePane );
+      this.triggerStageTabs.add( String.format( "Stage %d", i + 1), stagePane );
     }
 
     this.warningLabel = new JLabel( " " );
@@ -1522,14 +1477,7 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
       this.triggerLevel[stage].setEnabled( stageEnabled && complex );
       this.triggerDelay[stage].setEnabled( stageEnabled );
       this.triggerMode[stage].setEnabled( stageEnabled );
-      if ( aEnable && ( this.triggerMode[stage].getSelectedIndex() == 1 ) )
-      {
-        this.triggerChannel[stage].setEnabled( true );
-      }
-      else
-      {
-        this.triggerChannel[stage].setEnabled( false );
-      }
+      this.triggerChannel[stage].setEnabled(aEnable && this.triggerMode[stage].getSelectedIndex() == 1);
       this.triggerStart[stage].setEnabled( stageEnabled && complex );
 
       // @@@
@@ -1575,7 +1523,7 @@ public final class LogicSnifferConfigDialog extends JDialog implements Configura
       {
         final Integer delay = getNumericValue( this.triggerDelay[stage] );
 
-        result &= ( ( delay != null ) && ( delay.intValue() <= 65535 ) );
+        result &= ( ( delay != null ) && (delay <= 65535 ) );
         if ( !result && aWarnUserIfConfigIncorrect )
         {
           result = SwingComponentUtils.askConfirmation( this, "Trigger delay for stage " + stage

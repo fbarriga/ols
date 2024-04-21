@@ -17,6 +17,7 @@
  *
  *
  * Copyright (C) 2010-2011 - J.W. Janssen, http://www.lxtreme.nl
+ * Copyright (C) 2024 - Felipe Barriga Richards, http://github.com/fbarriga/ols
  */
 package org.sump.device.logicsniffer;
 
@@ -49,7 +50,8 @@ public class LogicSnifferDevice implements Device
 {
   // CONSTANTS
 
-  private static final String NAME = "OpenBench LogicSniffer";
+  private static final int UI_PRIORITY = 1;
+  private static final String NAME = "Hardware Device";
 
   private static final Logger LOG = Logger.getLogger( LogicSnifferDevice.class.getName() );
 
@@ -110,6 +112,12 @@ public class LogicSnifferDevice implements Device
     return NAME;
   }
 
+  @Override
+  public int getUiPriority()
+  {
+    return UI_PRIORITY;
+  }
+
   /**
    * @see nl.lxtreme.ols.api.devices.Device#isSetup()
    */
@@ -123,7 +131,7 @@ public class LogicSnifferDevice implements Device
    * Displays the device controller dialog with enabled configuration portion
    * and waits for user input.
    *
-   * @see nl.lxtreme.ols.api.devices.Device#setupCapture()
+   * @see nl.lxtreme.ols.api.devices.Device#setupCapture(Window)
    */
   @Override
   public boolean setupCapture( final Window aOwner )
@@ -149,11 +157,6 @@ public class LogicSnifferDevice implements Device
     }
   }
 
-  /**
-   * @param uri
-   * @return
-   * @throws IOException
-   */
   final StreamConnection createStreamConnection( final String uri ) throws IOException
   {
     return ( StreamConnection )this.connectorService.open( uri, ConnectorService.READ_WRITE,

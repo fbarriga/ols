@@ -4,96 +4,101 @@ Some documentation on the LogicSniffer client.
 
 == Architecture ==
 
-The client will be entirely OSGi-based. Reasons to chose for this is that all projects 
+The client will be entirely OSGi-based. Reasons to chose for this is that all projects
 are loosely coupled and can be upgraded individually. In addition, OSGi provides the
-ability to load/unload native libraries for the correct operating system out of the box. 
+ability to load/unload native libraries for the correct operating system out of the box.
 
 A description of the current projects is given in the following paragraphs.
 
-=== RXTX ===
+=== jSerialComm ===
 
-Provides the serial I/O routines for communicating with serial devices, such as the 
-LogicSniffer. It integrates the native libraries for various operating systems. 
+Provides the serial I/O routines for communicating with serial devices, such as the
+LogicSniffer. It integrates the native libraries for various operating systems.
 Currently, the following operating systems are supported:
 
-* Windows 32/64 bits;
-* Linux 32/64 bits;
-* Mac OSX 32/64 bits.
+
+* Windows XP and later (32-bit, 64-bit, ARM, and ARM64)
+* Mac OS X Tiger (10.4) and later (32/64-bit Intel and Apple Silicon)
+* All Linux distributions (32/64-bit x86, ARM, and PowerPC)
+* Solaris 10 and later (32/64-bit x86 and SPARC)
+* FreeBSD (32/64-bit x86 and ARM64)
+* OpenBSD (32/64-bit x86)
+* ARM/Intel/AMD Mobile Linux derivatives (e.g. RaspberryPi, BeagleBone)
 
 === API ===
 
-Provides the common API (maybe "common API" would be a better name?) shared between the 
+Provides the common API (maybe "common API" would be a better name?) shared between the
 client, tools and devices. This project does nothing on its own but provides some common
 code for the rest of the projects.
 
-The idea is to have only interfaces in the API-project, but this is currently not the 
+The idea is to have only interfaces in the API-project, but this is currently not the
 case. For example the AnnotatedData implementation is used by several other projects,
 and is a concrete class instead of an interface. To really solve this, one would need an
-additional project that provides common implementations. 
+additional project that provides common implementations.
 
 === Client ===
 
 Provides the actual UI of the client and forms the "glue" between devices, tools and UI.
-The client project is more or less an empty "shell" that allows devices and tools to be 
+The client project is more or less an empty "shell" that allows devices and tools to be
 added dynamically. The UI is entirely Swing based.
 
 === Devices ===
 
-Provides support for the actual devices, such as the LogicSniffer and a testing device. 
-A device contains everything to actually work with the device, from low-level 
+Provides support for the actual devices, such as the LogicSniffer and a testing device.
+A device contains everything to actually work with the device, from low-level
 communications to configuration UI and interfacing logic with the rest of the client.
 
 === Tools ===
 
-Provides analysis, measurement and other tools that can provide additional information 
+Provides analysis, measurement and other tools that can provide additional information
 about captured data. Most of the current tools do some "heavy" processing of data, which
 should be done in the background to keep the UI responsive. To make writing such tools
-easier, a "base" tool is provided which provides most of the boilerplate code. 
+easier, a "base" tool is provided which provides most of the boilerplate code.
 
 === Exports ===
 
-Provides the export functionality from the diagram to various output formats. The 
+Provides the export functionality from the diagram to various output formats. The
 exporters get access to the complete diagram, which can result in a ''very'' memory
 consuming export. No limitations are enforced from the platform.
 
 === Runner ===
 
-Provides a small "bootstrap" for the OSGi container. This project is the only non-OSGi 
+Provides a small "bootstrap" for the OSGi container. This project is the only non-OSGi
 project. It provides the only "main" method in all projects and this main should start
 the OSGi container with some predefined configuration and let the OSGi container do the
 remainder of the work. Currently, Felix 3.0 is used as OSGi container.
 
 === Logging ===
 
-Provides a logging "bridge" for Java's native logging functionality and OSGi Logging 
-service. It allows classes to log using Java's native logging functionality 
-(java.util.logging) which will be redirected to a OSGi log service under water. 
- 
+Provides a logging "bridge" for Java's native logging functionality and OSGi Logging
+service. It allows classes to log using Java's native logging functionality
+(java.util.logging) which will be redirected to a OSGi log service under water.
+
 === Util ===
 
-Provides some common utilities that are shared among all other projects. 
+Provides some common utilities that are shared among all other projects.
 
 == OLS data file format ==
 
 For storing captured data to files, the OLS uses the data format as used by the original
 sump client. The format is plain text, and rather easy to parse.
 
-If a line starts with a semicolon (;), it will be regarded as a header, or metadata. 
-These headers contain information about the actual sample data, such as sample rate, 
-capture length, and so on. If a line does '''not''' start with a semicolon, but contains 
+If a line starts with a semicolon (;), it will be regarded as a header, or metadata.
+These headers contain information about the actual sample data, such as sample rate,
+capture length, and so on. If a line does '''not''' start with a semicolon, but contains
 only ''hexadecimal digits'' and ''one at-sign'' (@), it will be regarded as sample data.
 All other lines are to be ignored.
 
 === Headers ===
 
 Headers start with a semicolon and are always a single line (so, terminated with carriage-
-return and/or line-feed). Headers contain of a key-value pair separated by a colon (:). 
+return and/or line-feed). Headers contain of a key-value pair separated by a colon (:).
 The format of a header is:
 
   ;<name>: <value>
 
-In which the ''<name>'' is a predefined header name (case sensitive!), and the ''<value>'' 
-an arbritary value for that particular header. 
+In which the ''<name>'' is a predefined header name (case sensitive!), and the ''<value>''
+an arbritary value for that particular header.
 
 The following headers are understood by the current client:
 
@@ -106,8 +111,8 @@ The following headers are understood by the current client:
 * ''CursorEnabled'': (Boolean, optional) defines whether or not cursors are to be enabled;
 * ''Cursor0''..''Cursor9'': (Long integer, optional) defines the time values of the individual cursors (up to ten).
 
-Integer values are expected to be ''32-bit signed values'', while Long integers are expected to be 
-''64-bit signed values''. Booleans are expected as ''true'' or ''false'' string values.  
+Integer values are expected to be ''32-bit signed values'', while Long integers are expected to be
+''64-bit signed values''. Booleans are expected as ''true'' or ''false'' string values.
 
 === Sample data ===
 
@@ -116,7 +121,7 @@ Sample data are always a single line (similar as headers) consisting of hexadeci
 
   <sample value>@<sample number>
 
-In which the ''<sample number>'' is the '''decimal''' (base 10) representation of the absolute sample 
+In which the ''<sample number>'' is the '''decimal''' (base 10) representation of the absolute sample
 number, and ''<sample value>'' the '''hexadecimal''' (base 16) representation of the sample value itself.
 
 Note that the ''Size'' header '''must''' match the total count of sample data.
@@ -131,8 +136,8 @@ The OLS client is extensible at several points. The following extension types ar
 # importers, denoting functionality to import external data formats and represent them as sample data. This extension point is not yet available.
 
 All extensions are written in Java, and have a few dependencies in order to work. They are packaged in
-JAR-files, in which one JAR file can contain multiple extension points of the same type, or of different 
-types. Though it is not mandatory, it is adviced to use Maven as build tool. A typical POM-file looks 
+JAR-files, in which one JAR file can contain multiple extension points of the same type, or of different
+types. Though it is not mandatory, it is adviced to use Maven as build tool. A typical POM-file looks
 like:
 
   <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -189,9 +194,9 @@ There are several "section" in the POM-file (denoted with whitespace), the first
 information itself, containing of a name, group identifier, version and so on. The second section is
 the list of dependencies. Most of the times the four dependencies listed above are enough. The last
 section is are the build instructions, which instruct Maven how the resulting JAR file should look
-like. Actually, it instructs how to MANIFEST.MF file of the resulting JAR should look like. While 
-most of this is rather static, special care needs to be taken for the tags ''OLS-Exporter'' and 
-''OLS-ExporterClass''. These are specific to the OLS-client, and are verbatimely written to the 
+like. Actually, it instructs how to MANIFEST.MF file of the resulting JAR should look like. While
+most of this is rather static, special care needs to be taken for the tags ''OLS-Exporter'' and
+''OLS-ExporterClass''. These are specific to the OLS-client, and are verbatimely written to the
 MANIFEST.MF file, like:
 
   ...
@@ -200,15 +205,15 @@ MANIFEST.MF file, like:
   ...
 
 Upon startup of the OLS-client, the manifests of all JARs are scanned for line starting with "OLS-".
-If found, it will be regarded as a potential extension point. The lines above tell the OLS-client two 
-things: 
+If found, it will be regarded as a potential extension point. The lines above tell the OLS-client two
+things:
 
 # the JAR contains one or more ''exporter'' extensions;
 # the main class of this exporter extension is ''nl.lxtreme.ols.export.funky.MyFunkyExporter''. Note
 that multiple (exporter) classes can be defined by separating them with comma's, like:
 
-  OLS-ExporterClass: my.first.package.MyExporter1, my.other.package2.MyExporter2 
+  OLS-ExporterClass: my.first.package.MyExporter1, my.other.package2.MyExporter2
 
-'''NOTE:''' both mentioned lines are needed! If one of them is omitted from the resulting JAR file, it 
+'''NOTE:''' both mentioned lines are needed! If one of them is omitted from the resulting JAR file, it
 will be considered an invalid extension and the results are not (well) defined!
 

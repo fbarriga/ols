@@ -1,0 +1,57 @@
+name: Create Release
+
+on:
+  workflow_dispatch
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: macos-14
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '18'
+          distribution: temurin
+          cache: maven
+
+      - name: Download JRE for Windows
+        run: |
+          curl --location "https://api.adoptium.net/v3/binary/latest/21/ga/windows/x64/jre/hotspot/normal/eclipse" -o jre.zip
+          unzip jre.zip -d jre_tmp
+          mv jre_tmp/* ./ols.distribution/src/main/resources/jre
+
+      - name: Build and Package macOS and Linux
+        run: mvn clean install package -P default
+        env:
+          createDMG: 1
+
+      - name: Build and Package Windows
+        run: mvn package -P windowsPlatform
+
+      - name: Get short commit SHA
+        run: |
+          echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
+
+      - name: Get Artifacts Path
+        run: |
+          echo "ARTIFACT_TAR_PATH=$(ls ./ols.distribution/target/ols-*.tar.gz | head -n 1)" >> $GITHUB_ENV
+          echo "ARTIFACT_DMG_PATH=$(ls ./ols.distribution/target/ols-*.dmg | head -n 1)" >> $GITHUB_ENV
+          echo "ARTIFACT_ZIP_PATH=$(ls ./ols.distribution/target/ols-*.zip | grep -v 'api\.zip' | head -n 1)" >> $GITHUB_ENV
+
+      - name: Create Release on GitHub
+        run: |
+          gh release create ${{ env.GITHUB_SHA_SHORT }} \
+            --title "Release ${{ env.GITHUB_SHA_SHORT }}" \
+            --draft \
+            --generate-notes \
+            --prerelease \
+            ${{ env.ARTIFACT_TAR_PATH }} ${{ env.ARTIFACT_DMG_PATH }} ${{ env.ARTIFACT_ZIP_PATH }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

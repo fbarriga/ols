@@ -43,6 +43,7 @@ public interface UIManagerKeys
   String AUTO_CENTER_TO_TRIGGER_AFTER_CAPTURE = "ols.trigger.auto.center.boolean";
   /** The current active color scheme. */
   String COLOR_SCHEME = "ols.current.color.scheme.enum";
+  String USER_SELECTED_UI_THEME = "ols.current.ui.theme.string";
   /**
    * Whether or not annotations of a channel should be retained after a
    * recapture.

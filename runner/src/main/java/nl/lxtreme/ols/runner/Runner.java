@@ -17,6 +17,7 @@
  *
  *
  * Copyright (C) 2010-2011 - J.W. Janssen, http://www.lxtreme.nl
+ * Copyright (C) 2024 - Felipe Barriga Richards, http://github.com/fbarriga/ols
  */
 package nl.lxtreme.ols.runner;
 
@@ -27,6 +28,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.logging.Level;
 
 import org.apache.felix.framework.*;
 import org.apache.felix.framework.util.*;
@@ -59,7 +61,7 @@ public final class Runner
       String _pluginDir = getPluginDir();
       String _cacheDir = null;
       boolean _cleanCache = false;
-      int _logLevel = 2;
+      int _logLevel = org.osgi.service.log.LogService.LOG_INFO;
 
       for ( String cmdLineArg : aCmdLineArgs )
       {
@@ -87,8 +89,12 @@ public final class Runner
         throw new IllegalArgumentException( "Invalid log level, should be between 0 and 6!" );
       }
 
+      if ( _pluginDir == null || _pluginDir.isEmpty()) {
+        throw new IllegalArgumentException( "Missing plugin directory argument! (-pluginDir=)" );
+      }
+
       this.pluginDir = new File( _pluginDir ).getCanonicalFile();
-      if ( "".equals( _pluginDir ) || !this.pluginDir.exists() )
+      if ( !this.pluginDir.exists() )
       {
         throw new IllegalArgumentException( String.format( "Invalid plugin directory (%s)!", this.pluginDir ) );
       }
@@ -154,10 +160,8 @@ public final class Runner
   /**
    * Creates a new {@link Runner} instance.
    *
-   * @throws IOException
    */
-  public Runner( final CmdLineOptions aOptions ) throws IOException
-  {
+  public Runner( final CmdLineOptions aOptions ) {
     this.options = aOptions;
   }
 
@@ -172,9 +176,20 @@ public final class Runner
    */
   public static void main( final String[] aArgs ) throws Exception
   {
+    setSystemProperties();
     Runner runner = new Runner( new CmdLineOptions( aArgs ) );
     runner.run();
     runner.waitForStop();
+  }
+
+  private static void setSystemProperties()
+  {
+    final String osName = System.getProperty( "os.name" );
+    if ( "Mac OS X".equalsIgnoreCase( osName ) || "Darwin".equalsIgnoreCase( osName ) ) {
+      System.setProperty("apple.awt.application.appearance", "system");
+      System.setProperty("apple.awt.application.name", "LogicSniffer");
+      System.setProperty("com.apple.mrj.application.apple.menu.about.name", "LogicSniffer");
+    }
   }
 
   /**
@@ -184,25 +199,39 @@ public final class Runner
   {
     try
     {
-      this.framework = new Felix( createConfig() );
+      log( LOG_DEBUG, "Starting OSGi framework...", null );
+      var config = createConfig();
+      this.framework = new Felix( config );
+
+      log( LOG_DEBUG, "Starting OSGi framework: executing init()", null );
       this.framework.init();
-      this.framework.start();
+
 
       // Issue #36: log something about where we're trying to read/store stuff,
       // makes offline debugging a bit easier...
-      this.fwLogger.log( LogService.LOG_INFO, "Framework started..." );
       this.fwLogger.log( LogService.LOG_INFO, "  plugin dir: " + this.options.pluginDir );
       this.fwLogger.log( LogService.LOG_INFO, "  cache dir : " + this.options.cacheDir );
 
       bootstrap( this.framework.getBundleContext() );
 
       this.fwLogger.log( LogService.LOG_INFO, "Bootstrap complete..." );
+
+      log( LOG_DEBUG, "Starting OSGi framework: executing start()", null );
+      this.framework.start();
+      this.fwLogger.log( LogService.LOG_INFO, "Framework started..." );
+
+      var logLevel = Integer.parseInt( (String) config.get(FelixConstants.LOG_LEVEL_PROP) );
+//      this.fwLogger.setLogLevel( Integer.parseInt( (String) config.get(FelixConstants.LOG_LEVEL_PROP) ) );
+      java.util.logging.LogManager.getLogManager().getLogger( "" ).setLevel( convertOsgiLogLevelToJavaLogLevel( logLevel ) );
     }
     catch ( Exception exception )
     {
-      this.fwLogger.log( LogService.LOG_ERROR,
-          "Failed to start OSGi framework! Possible reason: " + exception.getMessage(), exception );
-
+      if (this.fwLogger == null) {
+        log( LOG_ERROR, "Failed to start OSGi framework! Possible reason: " + exception.getMessage(), exception );
+      } else {
+        this.fwLogger.log(LogService.LOG_ERROR,
+                "Failed to start OSGi framework! Possible reason: " + exception.getMessage(), exception);
+      }
       throw exception;
     }
   }
@@ -236,12 +265,17 @@ public final class Runner
    */
   private void bootstrap( final BundleContext aContext ) throws InterruptedException
   {
+    fwLogger.log(LOG_DEBUG, "bootstrap: retrieving installed bundles");
     Map<String, Bundle> installed = getInstalledBundles( aContext );
     List<Bundle> toBeStarted = new ArrayList<Bundle>();
 
+    fwLogger.log(LOG_DEBUG, "bootstrap: retrieved %d installed bundles, retrieving bundles from plugin directory".formatted(installed.size()));
     List<String> available = getBundles( this.options.pluginDir );
+
+    fwLogger.log(LOG_DEBUG, "bootstrap: retrieved %d bundles from plugin directory".formatted(available.size()));
     for ( String bundleLocation : available )
     {
+      fwLogger.log(LOG_DEBUG, "bootstrap: loading bundle from '%s'".formatted(bundleLocation));
       Bundle bundle = installed.get( bundleLocation );
       if ( bundle == null )
       {
@@ -272,6 +306,11 @@ public final class Runner
     List<String> removed = new ArrayList<String>( installed.keySet() );
     removed.remove( Constants.SYSTEM_BUNDLE_LOCATION );
     removed.removeAll( available );
+
+    if (!removed.isEmpty()) {
+      fwLogger.log(LOG_DEBUG, "bootstrap: %d bundles deleted, removing them".formatted(removed.size()));
+    }
+
     for ( String plugin : removed )
     {
       Bundle bundle = installed.remove( plugin );
@@ -283,6 +322,7 @@ public final class Runner
     // Start all remaining bundles...
     for ( Bundle bundle : toBeStarted )
     {
+      fwLogger.log(LOG_DEBUG, "bootstrap: starting bundle '%s'".formatted(bundle.getSymbolicName()));
       startBundle( bundle );
     }
   }
@@ -292,7 +332,7 @@ public final class Runner
     this.fwLogger = new Logger();
     this.fwLogger.setLogger( this );
 
-    final String logLevel = "" + Math.min( 4, this.options.logLevel );
+    final String logLevel = "" + Math.min( org.osgi.service.log.LogService.LOG_DEBUG, this.options.logLevel );
     final Map<String, Object> config = new HashMap<String, Object>();
 
     config.put( Constants.FRAMEWORK_BOOTDELEGATION, "com.yourkit.*,com.sun.*,sun.*,apple.*,com.apple.*" );
@@ -538,6 +578,20 @@ public final class Runner
           exception );
     }
     return result;
+  }
+
+  private static java.util.logging.Level convertOsgiLogLevelToJavaLogLevel( int osgiLevel )
+  {
+    return switch ( osgiLevel )
+    {
+      case 0 -> Level.OFF;
+      case LogService.LOG_ERROR -> Level.SEVERE;
+      case LogService.LOG_WARNING -> Level.WARNING;
+      case LogService.LOG_INFO -> Level.INFO;
+      case LogService.LOG_DEBUG -> Level.FINE;
+      case 5 -> Level.FINER;
+      default -> Level.FINEST;
+    };
   }
 }
 

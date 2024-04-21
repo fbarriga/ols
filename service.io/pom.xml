@@ -11,10 +11,6 @@
 	<packaging>bundle</packaging>
 	<version>1.0.1</version>
 	<name>OSGi I/O-connection service</name>
-	<properties>
-		<paxexamversion>2.3.0.M1</paxexamversion>
-		<paxrunnerversion>1.7.4</paxrunnerversion>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.osgi</groupId>
@@ -23,14 +19,15 @@
 		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>osgi.cmpn</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>nl.lxtreme.ols</groupId>
-			<artifactId>org.rxtx</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>nl.lxtreme.ols</groupId>
 			<artifactId>util</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>nl.lxtreme.ols</groupId>
+			<artifactId>lib.jserialcomm</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.felix</groupId>
@@ -51,37 +48,37 @@
 		<dependency>
 			<groupId>org.ops4j.pax.exam</groupId>
 			<artifactId>pax-exam-junit4</artifactId>
-			<version>${paxexamversion}</version>
+			<version>3.6.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ops4j.pax.exam</groupId>
 			<artifactId>pax-exam-container-paxrunner</artifactId>
-			<version>${paxexamversion}</version>
+			<version>2.6.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ops4j.pax.exam</groupId>
 			<artifactId>pax-exam-link-assembly</artifactId>
-			<version>${paxexamversion}</version>
+			<version>4.13.5</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ops4j.pax.exam</groupId>
 			<artifactId>pax-exam-testforge</artifactId>
-			<version>${paxexamversion}</version>
+			<version>3.6.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
-			<version>1.6.1</version>
+			<version>2.0.12</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ops4j.pax.runner</groupId>
 			<artifactId>pax-runner-no-jcl</artifactId>
-			<version>${paxrunnerversion}</version>
+			<version>1.9.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -99,7 +96,7 @@
 						<Bundle-License>GPLv2;link=http://www.gnu.org/licenses/gpl-2.0.html</Bundle-License>
 						<Bundle-Activator>nl.lxtreme.ols.io.Activator</Bundle-Activator>
 						<Import-Package>*</Import-Package>
-						<Export-Package>javax.microedition.io; version="1.0.0"</Export-Package>
+						<Export-Package>javax.microedition.io; version="1.0.0",org.osgi.service.io</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>

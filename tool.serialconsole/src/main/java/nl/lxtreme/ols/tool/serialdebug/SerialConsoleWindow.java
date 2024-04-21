@@ -1,5 +1,5 @@
 /*
- * OpenBench LogicSniffer / SUMP project 
+ * OpenBench LogicSniffer / SUMP project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
  *
  * Copyright (C) 2006-2010 Michael Poppitz, www.sump.org
  * Copyright (C) 2010-2012 J.W. Janssen, www.lxtreme.nl
+ * Copyright (C) 2024 - Felipe Barriga Richards, http://github.com/fbarriga/ols
  */
 package nl.lxtreme.ols.tool.serialdebug;
 
@@ -41,10 +42,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.TooManyListenersException;
+import java.util.Arrays;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -55,6 +53,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
+import com.fazecast.jSerialComm.SerialPort;
+import com.fazecast.jSerialComm.SerialPortDataListener;
+import com.fazecast.jSerialComm.SerialPortEvent;
+import com.fazecast.jSerialComm.SerialPortIOException;
 import nl.lxtreme.jvt220.terminal.ITerminal;
 import nl.lxtreme.jvt220.terminal.ITerminalFrontend;
 import nl.lxtreme.jvt220.terminal.swing.SwingFrontend;
@@ -68,13 +70,7 @@ import nl.lxtreme.ols.util.swing.StandardActionFactory.CloseAction.Closeable;
 import nl.lxtreme.ols.util.swing.SwingComponentUtils;
 import nl.lxtreme.ols.util.swing.component.JErrorDialog;
 import nl.lxtreme.ols.util.swing.component.JLazyComboBox;
-import purejavacomm.CommPortIdentifier;
-import purejavacomm.NoSuchPortException;
-import purejavacomm.PortInUseException;
-import purejavacomm.SerialPort;
-import purejavacomm.SerialPortEvent;
-import purejavacomm.SerialPortEventListener;
-import purejavacomm.UnsupportedCommOperationException;
+
 
 
 /**
@@ -98,14 +94,12 @@ public class SerialConsoleWindow extends JFrame implements Closeable
 
   // VARIABLES
 
-  private boolean dialogResult;
-
-  private JComboBox portSelect;
-  private JComboBox portRateSelect;
-  private JComboBox stopBitsSelect;
-  private JComboBox dataBitsSelect;
-  private JComboBox paritySelect;
-  private JComboBox flowControlSelect;
+  private JComboBox<String> portSelect;
+  private JComboBox<String> portRateSelect;
+  private JComboBox<String> stopBitsSelect;
+  private JComboBox<String> dataBitsSelect;
+  private JComboBox<String> paritySelect;
+  private JComboBox<String> flowControlSelect;
 
   private ITerminal terminal;
   private ITerminalFrontend terminalFrontend;
@@ -124,8 +118,6 @@ public class SerialConsoleWindow extends JFrame implements Closeable
 
   /**
    * Creates a new {@link SerialConsoleWindow} instance.
-   * 
-   * @param aParent
    */
   public SerialConsoleWindow( final Window aParent )
   {
@@ -151,13 +143,9 @@ public class SerialConsoleWindow extends JFrame implements Closeable
   /**
    * Shows the dialog on screen.
    */
-  public boolean showDialog()
+  public void showDialog()
   {
-    this.dialogResult = false;
-
     setVisible( true );
-
-    return this.dialogResult;
   }
 
   /**
@@ -201,7 +189,7 @@ public class SerialConsoleWindow extends JFrame implements Closeable
         HostUtils.closeResource( this.serialInput );
         HostUtils.closeResource( this.serialOutput );
 
-        this.serialPort.close();
+        this.serialPort.closePort();
       }
     }
     catch ( IOException exception )
@@ -260,6 +248,12 @@ public class SerialConsoleWindow extends JFrame implements Closeable
       final Writer writer = this.terminalFrontend.getWriter();
       writer.write( text );
       writer.flush();
+    }
+    catch ( SerialPortIOException exception )
+    {
+      JErrorDialog.showDialog( getOwner(), "Sending data failed!", exception );
+      oldState = false;
+      disconnect();
     }
     catch ( IOException exception )
     {
@@ -343,7 +337,7 @@ public class SerialConsoleWindow extends JFrame implements Closeable
 
   /**
    * Creates the I/O pane.
-   * 
+   *
    * @return an I/O pane, never <code>null</code>.
    */
   private JComponent createIOPane()
@@ -363,7 +357,7 @@ public class SerialConsoleWindow extends JFrame implements Closeable
 
   /**
    * Creates the settings pane.
-   * 
+   *
    * @return a settings pane, never <code>null</code>.
    */
   private JComponent createSettingsPane()
@@ -450,127 +444,100 @@ public class SerialConsoleWindow extends JFrame implements Closeable
 
   /**
    * Returns the opened serial port.
-   * 
+   *
    * @return a serial port, never <code>null</code>.
-   * @throws NoSuchPortException
-   *           in case the defined port does not (or no longer) exist;
-   * @throws PortInUseException
-   *           in case the defined port is not available to us.
-   * @throws UnsupportedCommOperationException
-   *           in case we're trying to perform a port operation that is not
-   *           supported.
    */
-  private SerialPort openSerialPort() throws IOException, NoSuchPortException, PortInUseException,
-      UnsupportedCommOperationException, TooManyListenersException
+  private SerialPort openSerialPort()
   {
     String portName = String.valueOf( this.portSelect.getSelectedItem() );
-
-    CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier( portName );
-
-    SerialPort result = ( SerialPort )portId.open( "Serial console tool", 1000 );
+    var port = SerialPort.getCommPort(portName);
 
     int baudrate = NumberUtils.smartParseInt( String.valueOf( this.portRateSelect.getSelectedItem() ) );
 
     String db = ( String )this.dataBitsSelect.getSelectedItem();
-    int databits;
-    if ( "5".equals( db ) )
-    {
-      databits = SerialPort.DATABITS_5;
-    }
-    else if ( "6".equals( db ) )
-    {
-      databits = SerialPort.DATABITS_6;
-    }
-    else if ( "7".equals( db ) )
-    {
-      databits = SerialPort.DATABITS_7;
-    }
-    else
-    {
-      databits = SerialPort.DATABITS_8;
+    int databits = Integer.parseInt(db);
+    if (databits < 5 || databits > 8) {
+      databits = 8;
     }
 
     String sb = ( String )this.stopBitsSelect.getSelectedItem();
     int stopbits;
     if ( "2".equals( sb ) )
     {
-      stopbits = SerialPort.STOPBITS_2;
+      stopbits = SerialPort.TWO_STOP_BITS;
     }
     else if ( "1.5".equals( sb ) )
     {
-      stopbits = SerialPort.STOPBITS_1_5;
+      stopbits = SerialPort.ONE_POINT_FIVE_STOP_BITS;
     }
     else
     {
-      stopbits = SerialPort.STOPBITS_1;
+      stopbits = SerialPort.ONE_STOP_BIT;
     }
 
     final String par = String.valueOf( this.paritySelect.getSelectedItem() );
     int parity;
     if ( "Odd".equalsIgnoreCase( par ) )
     {
-      parity = SerialPort.PARITY_NONE;
+      parity = SerialPort.ODD_PARITY;
     }
     else if ( "Even".equalsIgnoreCase( par ) )
     {
-      parity = SerialPort.PARITY_EVEN;
+      parity = SerialPort.EVEN_PARITY;
     }
     else
     {
-      parity = SerialPort.PARITY_NONE;
+      parity = SerialPort.NO_PARITY;
     }
 
     String fc = String.valueOf( this.flowControlSelect.getSelectedItem() );
     int flowControl;
     if ( fc.startsWith( "XON" ) )
     {
-      flowControl = SerialPort.FLOWCONTROL_XONXOFF_IN | SerialPort.FLOWCONTROL_XONXOFF_OUT;
+      flowControl = SerialPort.FLOW_CONTROL_XONXOFF_IN_ENABLED | SerialPort.FLOW_CONTROL_XONXOFF_OUT_ENABLED;
     }
     else if ( fc.startsWith( "RTS" ) )
     {
-      flowControl = SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT;
+      flowControl = SerialPort.FLOW_CONTROL_RTS_ENABLED | SerialPort.FLOW_CONTROL_CTS_ENABLED;
     }
     else
     {
-      flowControl = SerialPort.FLOWCONTROL_NONE;
+      flowControl = SerialPort.FLOW_CONTROL_DISABLED;
     }
 
-    result.setSerialPortParams( baudrate, databits, stopbits, parity );
-    result.setFlowControlMode( flowControl );
-    result.enableReceiveTimeout( 100 );
-    result.enableReceiveThreshold( 0 );
+    port.setBaudRate(baudrate);
+    port.setNumDataBits(databits);
+    port.setNumStopBits(stopbits);
+    port.setParity(parity);
+    port.setFlowControl(flowControl);
+    port.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING, 100, 0);
 
-    result.notifyOnDataAvailable( true );
-    result.addEventListener( new SerialPortEventListener()
+    port.addDataListener(new SerialPortDataListener()
     {
       @Override
-      public void serialEvent( SerialPortEvent event )
-      {
-        if ( ( event.getEventType() & SerialPortEvent.DATA_AVAILABLE ) != 0 )
-        {
-          SerialPort port = ( SerialPort )event.getSource();
+      public int getListeningEvents() {
+        return SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
+      }
 
-          try
-          {
-            InputStream is = port.getInputStream();
+      @Override
+      public void serialEvent(SerialPortEvent event) {
+        if (event.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
+          return;
+        }
 
-            Integer[] buf = new Integer[is.available()];
-            for ( int i = 0; i < buf.length; i++ )
-            {
-              buf[i] = Integer.valueOf( is.read() );
-            }
-
-            terminalFrontend.writeCharacters( buf );
-          }
-          catch ( IOException e )
-          {
-            e.printStackTrace();
-          }
+        var port = event.getSerialPort();
+        try {
+          var is = port.getInputStream();
+          var buffer = new byte[is.available()];
+          is.read(buffer, 0, buffer.length);
+          terminalFrontend.writeCharacters(new String(buffer));
+        } catch (IOException e) {
+          e.printStackTrace();
         }
       }
-    } );
+    });
 
-    return result;
+    return port;
   }
 
   /**
@@ -587,25 +554,14 @@ public class SerialConsoleWindow extends JFrame implements Closeable
       }
     } );
 
-    this.portSelect = new JLazyComboBox( new JLazyComboBox.ItemProvider()
+    this.portSelect = new JLazyComboBox<String>( new JLazyComboBox.ItemProvider<>()
     {
       @Override
-      @SuppressWarnings( "unchecked" )
-      public Object[] getItems()
+      public String[] getItems()
       {
-        final Enumeration<CommPortIdentifier> portIdentifiers = CommPortIdentifier.getPortIdentifiers();
-        final List<String> portList = new ArrayList<String>();
-
-        while ( portIdentifiers.hasMoreElements() )
-        {
-          CommPortIdentifier portId = portIdentifiers.nextElement();
-          if ( portId.getPortType() == CommPortIdentifier.PORT_SERIAL )
-          {
-            portList.add( portId.getName() );
-          }
-        }
-
-        return portList.toArray( new String[portList.size()] );
+        return Arrays.stream(com.fazecast.jSerialComm.SerialPort.getCommPorts())
+                .map(com.fazecast.jSerialComm.SerialPort::getSystemPortName)
+                .toArray(String[]::new);
       }
     } );
     // allow people to put their own port name into it...
@@ -617,27 +573,27 @@ public class SerialConsoleWindow extends JFrame implements Closeable
       {
         disconnect();
 
-        JComboBox cb = ( JComboBox )aEvent.getSource();
+        JComboBox<String> cb = ( JComboBox<String> )aEvent.getSource();
         String item = ( String )cb.getSelectedItem();
 
         // Do not enable the connect button until valid is selected as port...
-        SerialConsoleWindow.this.connectButton.setEnabled( ( item != null ) && !"".equals( item.trim() ) );
+        SerialConsoleWindow.this.connectButton.setEnabled( ( item != null ) && !item.trim().isEmpty());
       }
     } );
 
-    this.portRateSelect = new JComboBox( BAUDRATES );
+    this.portRateSelect = new JComboBox<>( BAUDRATES );
     this.portRateSelect.setSelectedIndex( 3 ); // 115k2
 
-    this.dataBitsSelect = new JComboBox( DATABITS );
+    this.dataBitsSelect = new JComboBox<>( DATABITS );
     this.dataBitsSelect.setSelectedIndex( 3 ); // 8 bits
 
-    this.stopBitsSelect = new JComboBox( STOPBITS );
+    this.stopBitsSelect = new JComboBox<>( STOPBITS );
     this.stopBitsSelect.setSelectedIndex( 0 ); // 1
 
-    this.paritySelect = new JComboBox( PARITIES );
+    this.paritySelect = new JComboBox<>( PARITIES );
     this.paritySelect.setSelectedIndex( 0 ); // NONE
 
-    this.flowControlSelect = new JComboBox( FLOWCONTROLS );
+    this.flowControlSelect = new JComboBox<>( FLOWCONTROLS );
     this.flowControlSelect.setSelectedIndex( 0 ); // Off
 
     this.autoNewLineMode = new JCheckBox();

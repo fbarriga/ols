@@ -86,4 +86,5 @@ public interface HostProperties
    */
   boolean isDebugMode();
 
+  String getJvmVersion();
 }

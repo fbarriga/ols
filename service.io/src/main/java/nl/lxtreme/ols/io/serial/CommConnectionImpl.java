@@ -1,5 +1,5 @@
 /*
- * OpenBench LogicSniffer / SUMP project 
+ * OpenBench LogicSniffer / SUMP project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,24 +15,26 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin St, Fifth Floor, Boston, MA 02110, USA
  *
- * 
+ *
  * Copyright (C) 2010-2011 - J.W. Janssen, http://www.lxtreme.nl
+ * Copyright (C) 2024 - Felipe Barriga Richards, http://github.com/fbarriga/ols
  */
 package nl.lxtreme.ols.io.serial;
 
+
+import com.fazecast.jSerialComm.SerialPort;
 
 import java.io.*;
 import java.util.logging.*;
 
 import javax.microedition.io.*;
 
-import purejavacomm.*;
 
 
 /**
  * Provides a serial port connection, making use the JavaComm API as defined by
  * Sun/Oracle.
- * 
+ *
  * @see http://download.oracle.com/docs/cd/E17802_01/products/products/javacomm/
  *      reference/api/index.html
  */
@@ -53,7 +55,7 @@ final class CommConnectionImpl implements CommConnection
 
   /**
    * Creates a new SerialConnection instance.
-   * 
+   *
    * @param aPort
    *          the serial port to wrap, cannot be <code>null</code>.
    * @throws IllegalArgumentException
@@ -76,7 +78,7 @@ final class CommConnectionImpl implements CommConnection
    * If the given resource also implements the {@link Flushable} interface, the
    * resource is flushed before being closed.
    * </p>
-   * 
+   *
    * @param aResource
    *          the resource to close, can be <code>null</code>, it might already
    *          be closed.
@@ -123,7 +125,7 @@ final class CommConnectionImpl implements CommConnection
    * @see javax.microedition.io.Connection#close()
    */
   @Override
-  public void close() throws IOException
+  public void close()
   {
     try
     {
@@ -132,7 +134,7 @@ final class CommConnectionImpl implements CommConnection
 
       if ( this.port != null )
       {
-        this.port.close();
+        this.port.closePort();
       }
     }
     finally
@@ -174,8 +176,7 @@ final class CommConnectionImpl implements CommConnection
    * @see javax.microedition.io.InputConnection#openInputStream()
    */
   @Override
-  public InputStream openInputStream() throws IOException
-  {
+  public InputStream openInputStream() {
     if ( this.is != null )
     {
       return this.is;
@@ -187,8 +188,7 @@ final class CommConnectionImpl implements CommConnection
    * @see javax.microedition.io.OutputConnection#openOutputStream()
    */
   @Override
-  public OutputStream openOutputStream() throws IOException
-  {
+  public OutputStream openOutputStream() {
     if ( this.os != null )
     {
       return this.os;
@@ -203,7 +203,11 @@ final class CommConnectionImpl implements CommConnection
   public int setBaudRate( final int aBaudRate )
   {
     final int oldBaudRate = getBaudRate();
-    // not supported; no change possible...
-    return oldBaudRate;
+    if (port.setBaudRate(aBaudRate)) {
+      return aBaudRate;
+    } else {
+      // failed, no change
+      return oldBaudRate;
+    }
   }
 }

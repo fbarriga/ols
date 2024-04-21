@@ -36,12 +36,6 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.jgoodies</groupId>
-			<artifactId>jgoodies-looks</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.apache.felix.prefs</artifactId>
 			<scope>runtime</scope>
@@ -104,17 +98,27 @@
 		</dependency>
 		<dependency>
 			<groupId>nl.lxtreme.ols</groupId>
+			<artifactId>lib.jserialcomm</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>nl.lxtreme.ols</groupId>
+			<artifactId>lib.jvt220</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>nl.lxtreme.ols</groupId>
+			<artifactId>lib.flatlaf</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>nl.lxtreme.ols</groupId>
 			<artifactId>util</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>nl.lxtreme.ols</groupId>
 			<artifactId>test.util</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>nl.lxtreme.ols</groupId>
-			<artifactId>org.rxtx</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -304,7 +308,7 @@
 										<descriptor>${basedir}/src/main/assembly/assemblyWin.xml</descriptor>
 									</descriptors>
 									<appendAssemblyId>true</appendAssemblyId>
-									<finalName>ols-${ols.version}</finalName>
+									<finalName>ols-${ols.version}-with-JRE</finalName>
 								</configuration>
 							</execution>
 						</executions>
@@ -313,6 +317,7 @@
 			</build>
 		</profile>
 		<profile>
+			<id>default</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>

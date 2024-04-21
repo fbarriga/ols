@@ -447,10 +447,6 @@ public final class SpringLayoutUtils
     return selectionColor;
   }
 
-  /**
-   * @param aComponent
-   * @return
-   */
   private static boolean isSeparatorComponent( final Component aComponent )
   {
     if ( !( aComponent instanceof JComponent ) )

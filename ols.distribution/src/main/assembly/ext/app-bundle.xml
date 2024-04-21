@@ -6,7 +6,7 @@
 	<property name="project.target" value="${basedir}/../../../../target" />
 	<property name="project.targetapp" value="${project.target}/osx" />
 
-	<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="${basedir}/../lib/jarbundler-2.1.0.jar" />
+	<taskdef name="jarbundler" classname="com.ultramixer.jarbundler.JarBundler" classpath="${basedir}/../lib/jarbundler-core-3.3.0.jar" />
 
 	<target name="init" description="Initializes the artifact target folder." unless="package.osx.skip">
 
@@ -35,7 +35,23 @@
 	<target name="package" depends="init" description="Creates the OSX app bundle" if="isMac">
 		<property name="project.targetapp-src" value="${project.target}/ols-${project.version}-full/ols-${project.version}" />
 
-		<jarbundler dir="${project.targetapp}" signature="OBLS" bundleid="nl.lxtreme.ols" name="${ols.project.name}" shortname="${ols.project.name}" mainclass="nl.lxtreme.ols.runner.Runner" version="${project.version}" build="1" jvmversion="1.6+" arguments="-Dnl.lxtreme.ols.bundle.dir=$JAVAROOT/plugins" workingdirectory="$APP_PACKAGE/Contents/Resources/Java" vmoptions="-Xmx1024m" icon="${basedir}/../../resources/LogicSniffer.icns">
+		<jarbundler dir="${project.targetapp}"
+								signature="OBLS"
+								bundleid="nl.lxtreme.ols"
+								name="${ols.project.name}"
+								shortname="${ols.project.name}"
+								mainclass="nl.lxtreme.ols.runner.Runner"
+								version="${project.version}"
+								build="1"
+								jvmversion="1.7+"
+								arguments="-Dnl.lxtreme.ols.bundle.dir=$JAVAROOT/plugins"
+								workingdirectory="$APP_PACKAGE/Contents/Resources/Java"
+								vmoptions="-Xmx1024m -Xdock:name=LogicSniffer -Dcom.apple.mrj.application.apple.menu.about.name=LogicSniffer -Djna.nosys=true"
+								icon="${basedir}/../../resources/LogicSniffer.icns"
+								stubfile="${basedir}/universalJavaApplicationStub"
+								useJavaXKey="true"
+								highresolutioncapable="true"
+		>
 			<!-- put all bin/*.jar files on the class path -->
 			<jarfileset dir="${project.targetapp-src}">
 				<include name="bin/*.jar" />
@@ -95,11 +111,6 @@
 			<arg value="-imagekey" />
 			<arg value="zlib-level=9" />
 			<arg value="-o" />
-			<arg value="${project.target}/ols-${project.version}-full.dmg" />
-		</exec>
-		<exec executable="hdiutil">
-			<arg value="internet-enable" />
-			<arg value="-yes" />
 			<arg value="${project.target}/ols-${project.version}-full.dmg" />
 		</exec>
 

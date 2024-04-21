@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 # Simple check to see whether the "magic" Java binary is available on our path;
 java -version 1>/dev/null 2>&1
@@ -8,15 +8,6 @@ if [ "$?" -ne "0" ]; then
 	exit 1
 fi
 
-platformOpts=
-java -Xdock:name="test" -version 1>/dev/null 2>&1
-if [ "$?" -eq "0" ]; then
-	# running on OSX
-	platformOpts="-Xdock:name=LogicSniffer -Dcom.apple.mrj.application.apple.menu.about.name=LogicSniffer"
-else
-	# running on other platforms
-	platformOpts="-DPlastic.defaultTheme=SkyBluer -Dswing.defaultlaf=com.jgoodies.looks.plastic.Plastic3DLookAndFeel"
-fi
 
 # cross-platform "readlink -f" function; taken and modified (clean ups and made
 # recursive) from <http://stackoverflow.com/questions/1055671>.
@@ -44,6 +35,10 @@ classpath="$basedir/bin/*"
 # give the client roughly 1gigabyte of memory
 memsettings=-Xmx1024m
 
-java $platformOpts $memsettings -Djna.nosys=true -cp "$classpath" nl.lxtreme.ols.runner.Runner -pluginDir="$plugindir" "$@"
+
+java $memsettings -Djna.nosys=true \
+  -Djava.library.path="$basedir/bin/" \
+  -cp "$classpath" nl.lxtreme.ols.runner.Runner \
+  -pluginDir="$plugindir" "$@"
 
 ###EOF###

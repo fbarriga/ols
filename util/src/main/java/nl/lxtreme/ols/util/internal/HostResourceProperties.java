@@ -177,4 +177,14 @@ public class HostResourceProperties implements HostProperties
   {
     return Boolean.parseBoolean( System.getProperty( "nl.lxtreme.ols.client.debug", "false" ) );
   }
+
+  @Override
+  public String getJvmVersion()
+  {
+    return System.getProperty("java.runtime.name")
+      + " "
+      + System.getProperty("java.version")
+      + " "
+      + System.getProperty("java.vendor");
+  }
 }

@@ -6,9 +6,9 @@ package nl.lxtreme.ols.client.project.impl;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.*;
-
-import org.osgi.service.log.*;
 
 import nl.lxtreme.ols.api.*;
 import nl.lxtreme.ols.api.data.project.*;
@@ -25,9 +25,7 @@ public final class UserSettingsManagerImpl implements UserSettingsManager
   private static final String SETTINGS_ID_FILENAME = "settings.";
 
   // VARIABLES
-
-  // Injected by Felix DM...
-  private volatile LogService log;
+  private static final Logger LOG = Logger.getLogger( UserSettingsManagerImpl.class.getName() );
 
   // METHODS
 
@@ -48,12 +46,11 @@ public final class UserSettingsManagerImpl implements UserSettingsManager
 
     if ( !aUserSettingsFile.exists() )
     {
-      this.log.log( LogService.LOG_INFO, "Ignoring user settings from " + aUserSettingsFile
-          + "; file does not exist..." );
+      LOG.info( "Ignoring user settings from " + aUserSettingsFile + "; file does not exist..." );
       return;
     }
 
-    this.log.log( LogService.LOG_INFO, "Loading user settings from " + aUserSettingsFile );
+    LOG.info( "Loading user settings from " + aUserSettingsFile );
 
     InputStream is = null;
     ZipInputStream zipIS = null;
@@ -84,7 +81,7 @@ public final class UserSettingsManagerImpl implements UserSettingsManager
     }
     catch ( IOException exception )
     {
-      this.log.log( LogService.LOG_WARNING, "Failed to load implicit user settings...", exception );
+      LOG.log(Level.WARNING, "Failed to load implicit user settings...", exception );
     }
     finally
     {
@@ -108,7 +105,7 @@ public final class UserSettingsManagerImpl implements UserSettingsManager
       throw new IllegalArgumentException( "Project cannot be null!" );
     }
 
-    this.log.log( LogService.LOG_INFO, "Saving user settings to " + aUserSettingsFile );
+    LOG.info( "Saving user settings to " + aUserSettingsFile );
 
     OutputStream os = null;
 
@@ -147,23 +144,12 @@ public final class UserSettingsManagerImpl implements UserSettingsManager
     }
     catch ( IOException exception )
     {
-      this.log.log( LogService.LOG_WARNING, "Failed to save implicit user settings...", exception );
+      LOG.log( Level.WARNING, "Failed to save implicit user settings...", exception );
       throw new RuntimeException( "Failed to save implicit user settings.", exception );
     }
     finally
     {
       HostUtils.closeResource( os );
     }
-  }
-
-  /**
-   * Sets log to the given value.
-   * 
-   * @param aLog
-   *          the log to set.
-   */
-  public void setLog( final LogService aLog )
-  {
-    this.log = aLog;
   }
 }

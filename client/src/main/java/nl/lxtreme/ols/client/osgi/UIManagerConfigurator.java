@@ -47,6 +47,7 @@ public class UIManagerConfigurator implements ManagedService
   private static final String FONT_SUFFIX = ".font";
   private static final String COLOR_SUFFIX = ".color";
   private static final String FLOAT_SUFFIX = ".float";
+  private static final String STRING_SUFFIX = ".string";
   private static final String ENUM_SUFFIX = ".enum";
   private static final String BOOLEAN_SUFFIX = ".boolean";
 
@@ -209,6 +210,10 @@ public class UIManagerConfigurator implements ManagedService
     {
       // Parse as float value
       return Float.valueOf( value );
+    }
+    else if ( aKey.endsWith( STRING_SUFFIX ) )
+    {
+      return value;
     }
     else if ( aKey.endsWith( FONT_SUFFIX ) )
     {

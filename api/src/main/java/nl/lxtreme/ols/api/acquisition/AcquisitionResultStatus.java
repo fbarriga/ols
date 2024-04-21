@@ -190,4 +190,12 @@ public final class AcquisitionResultStatus
   {
     return this.status == ResultStatus.FAILED;
   }
+
+  @Override
+  public String toString() {
+    return "AcquisitionResultStatus{" +
+            "status=" + status +
+            ", message='" + message + '\'' +
+            '}';
+  }
 }

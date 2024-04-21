@@ -17,26 +17,20 @@
  *
  *
  * Copyright (C) 2010-2011 - J.W. Janssen, http://www.lxtreme.nl
+ * Copyright (C) 2024 - Felipe Barriga Richards, http://github.com/fbarriga/ols
  */
 package nl.lxtreme.ols.logging;
 
-
-import static nl.lxtreme.ols.logging.Activator.*;
-
 import org.osgi.framework.*;
 import org.osgi.service.log.*;
-
 
 /**
  * An implementation of the OSGi LogService that directly outputs each log
  * message to <code>System.out</code>. It does not implement the LogReader or
  * LogListeners.
  */
-@SuppressWarnings( "rawtypes" )
 public class ConsoleLogger implements LogService
 {
-  private static String[] LEVEL = { "", "ERROR", "WARN ", "INFO ", "DEBUG" };
-
   public void log( final int level, final String message )
   {
     log( null, level, message, null );
@@ -54,44 +48,55 @@ public class ConsoleLogger implements LogService
 
   public void log( final ServiceReference reference, final int level, final String message, final Throwable throwable )
   {
-    if ( !isDebugMode() || ( level > getOsgiLogLevel() ) )
-    {
-      return;
-    }
-
-    String bundle = " [   ]";
-    String service = " ";
+    String bundle = " ";
     if ( reference != null )
     {
+      String service;
       bundle = "00" + reference.getBundle().getBundleId();
       bundle = " [" + bundle.substring( bundle.length() - 3 ) + "]";
 
       Object objectClass = reference.getProperty( Constants.OBJECTCLASS );
-      if ( objectClass instanceof String[] )
+      if ( objectClass instanceof String[] objClassArr )
       {
-        StringBuffer buffer = new StringBuffer();
-        String[] objClassArr = ( ( String[] )objectClass );
+        var serviceStrBuilder = new StringBuilder( " " );
+        var buffer = new StringBuilder();
         for ( String svc : objClassArr )
         {
-          if ( buffer.length() > 0 )
+          if (!buffer.isEmpty())
           {
             buffer.append( ';' );
           }
           buffer.append( svc );
-          service = buffer.toString() + ": ";
+          serviceStrBuilder.append( buffer ).append( ": " );
         }
+        service = serviceStrBuilder.toString();
       }
       else
       {
         service = objectClass.toString() + ": ";
       }
+      bundle += service;
     }
 
-    String msg = "[" + LEVEL[level] + "]" + bundle + service + message;
-    if ( !msg.contains( "org.slf4j.helpers" ) && !message.contains( "TRACE" ) )
-    {
-      System.out.println( msg );
-    }
+    var levelName = switch(level) {
+      case 1000 -> "ERROR";                    // java.util.logging.Level.SEVERE
+      case 900 -> "WARN";                     // java.util.logging.Level.WARNING
+      case 800 -> "INFO";                     // java.util.logging.Level.INFO
+      case 700 -> "CONFIG";                   // java.util.logging.Level.CONFIG
+      case 500 -> "FINE";                     // java.util.logging.Level.FINE
+      case 400 -> "FINER";                    // java.util.logging.Level.FINER
+      case 300 -> "FINEST";                   // java.util.logging.Level.FINEST
+      case Integer.MIN_VALUE -> "ALL";        // java.util.logging.Level.ALL
+
+      case LogService.LOG_ERROR -> "ERROR";   // org.osgi.service.log.LogService.LOG_ERROR
+      case LogService.LOG_WARNING -> "WARN";  // org.osgi.service.log.LogService.LOG_WARNING
+      case LogService.LOG_INFO -> "INFO";     // org.osgi.service.log.LogService.LOG_INFO
+      case LogService.LOG_DEBUG -> "DEBUG";   // org.osgi.service.log.LogService.LOG_DEBUG
+      default -> "UNKNOWN " + level;
+    };
+
+    String msg = levelName + bundle + message;
+    System.out.println( msg );
 
     if ( throwable != null )
     {

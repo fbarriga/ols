@@ -17,12 +17,12 @@
  *
  *
  * Copyright (C) 2010-2011 - J.W. Janssen, http://www.lxtreme.nl
+ * Copyright (C) 2024 - Felipe Barriga Richards, http://github.com/fbarriga/ols
  */
 package nl.lxtreme.ols.device.generic;
 
 
 import java.awt.*;
-import java.io.*;
 
 import nl.lxtreme.ols.api.acquisition.*;
 import nl.lxtreme.ols.api.devices.*;
@@ -37,6 +37,7 @@ public class GenericDevice implements Device
   // CONSTANTS
 
   private static final String NAME = "Generic I/O";
+  private static final int UI_PRIORITY = 2;
 
   // VARIABLES
 
@@ -49,7 +50,7 @@ public class GenericDevice implements Device
    * {@inheritDoc}
    */
   @Override
-  public void close() throws IOException
+  public void close()
   {
     // No-op...
   }
@@ -59,7 +60,6 @@ public class GenericDevice implements Device
    */
   @Override
   public AcquisitionTask createAcquisitionTask( final AcquisitionProgressListener aProgressListener )
-      throws IOException
   {
     String dataFormat = this.deviceConfig.getDataFormat();
     if ( GenericDeviceConfigDialog.DATA_FORMATS[0].equals( dataFormat ) )
@@ -74,7 +74,7 @@ public class GenericDevice implements Device
    * {@inheritDoc}
    */
   @Override
-  public CancelTask createCancelTask() throws IOException
+  public CancelTask createCancelTask()
   {
     // Nothing special is needed...
     return null;
@@ -87,6 +87,12 @@ public class GenericDevice implements Device
   public String getName()
   {
     return NAME;
+  }
+
+  @Override
+  public int getUiPriority()
+  {
+    return UI_PRIORITY;
   }
 
   /**

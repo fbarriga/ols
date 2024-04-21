@@ -42,12 +42,12 @@ public class AboutBox extends JDialog implements Closeable
   /**
    * Creates a new AboutBox instance.
    */
-  public AboutBox( final String aName, final String aVersion )
+  public AboutBox( final String aName, final String aVersion, final String aJvmVersion )
   {
     super( SwingComponentUtils.getCurrentWindow(), "About " + aName, ModalityType.APPLICATION_MODAL );
 
     final JTabbedPane tabbedPane = new JTabbedPane();
-    tabbedPane.add( "About", AboutPane.create( aName, aVersion ) );
+    tabbedPane.add( "About", AboutPane.create( aName, aVersion, aJvmVersion ) );
     tabbedPane.add( "Contributors", ContributorsPane.create() );
 
     final JComponent buttonPane = SwingComponentUtils.createButtonPane( StandardActionFactory.createCloseButton() );

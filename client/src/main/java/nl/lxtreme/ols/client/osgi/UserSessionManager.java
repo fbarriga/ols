@@ -25,6 +25,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.concurrent.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 import nl.lxtreme.ols.api.*;
@@ -52,10 +54,10 @@ public class UserSessionManager
   static class WindowStateListener implements AWTEventListener
   {
     // VARIABLES
+    private static final Logger LOG = Logger.getLogger( WindowStateListener.class.getName() );
 
     private volatile PreferencesService preferenceService;
     private volatile ProjectManager projectManager;
-    private volatile LogService logger;
 
     private final ConcurrentMap<String, Boolean> prefsLoaded;
     private final String userName;
@@ -117,7 +119,7 @@ public class UserSessionManager
       // Install us as a global window state listener...
       Toolkit.getDefaultToolkit().addAWTEventListener( this, AWTEvent.WINDOW_EVENT_MASK );
 
-      this.logger.log( LogService.LOG_DEBUG, "AWT Window state listener installed..." );
+      LOG.fine( "AWT Window state listener installed..." );
     }
 
     /**
@@ -127,18 +129,7 @@ public class UserSessionManager
     {
       Toolkit.getDefaultToolkit().removeAWTEventListener( this );
 
-      this.logger.log( LogService.LOG_DEBUG, "AWT Window state listener removed..." );
-    }
-
-    /**
-     * Sets logger to the given value.
-     * 
-     * @param aLogger
-     *          the logger to set.
-     */
-    final void setLogger( final LogService aLogger )
-    {
-      this.logger = aLogger;
+      LOG.fine( "AWT Window state listener removed..." );
     }
 
     /**
@@ -255,7 +246,7 @@ public class UserSessionManager
       {
         if ( aComponent instanceof Configurable )
         {
-          this.logger.log( LogService.LOG_DEBUG, "Reading dialog-specific properties for: " + aNamespace );
+          LOG.fine( "Reading dialog-specific properties for: " + aNamespace );
 
           try
           {
@@ -264,7 +255,7 @@ public class UserSessionManager
           }
           catch ( Exception exception )
           {
-            this.logger.log( LogService.LOG_DEBUG, "Failed to read preferences for: " + aNamespace, exception );
+            LOG.log( Level.FINE, "Failed to read preferences for: " + aNamespace, exception );
           }
         }
 
@@ -272,7 +263,7 @@ public class UserSessionManager
         // popups/dropdowns, etc...
         if ( isManagedWindow( aComponent ) )
         {
-          this.logger.log( LogService.LOG_DEBUG, "Reading window-properties for: " + aNamespace );
+          LOG.fine( "Reading window-properties for: " + aNamespace );
 
           final Preferences componentPrefs = getUserPreferences( aNamespace );
           SwingComponentUtils.loadWindowState( componentPrefs, aComponent );
@@ -320,7 +311,7 @@ public class UserSessionManager
       {
         if ( aComponent instanceof Configurable )
         {
-          this.logger.log( LogService.LOG_DEBUG, "Writing dialog-specific properties for: " + aNamespace );
+          LOG.fine( "Writing dialog-specific properties for: " + aNamespace );
 
           try
           {
@@ -332,7 +323,7 @@ public class UserSessionManager
           }
           catch ( Exception exception )
           {
-            this.logger.log( LogService.LOG_DEBUG, "Failed to safe properties for: " + aNamespace, exception );
+            LOG.log( Level.FINE, "Failed to safe properties for: " + aNamespace, exception );
           }
         }
 
@@ -340,7 +331,7 @@ public class UserSessionManager
         // popups/dropdowns, etc...
         if ( isManagedWindow( aComponent ) )
         {
-          this.logger.log( LogService.LOG_DEBUG, "Writing window-properties for: " + aNamespace );
+          LOG.fine( "Writing window-properties for: " + aNamespace );
 
           final Preferences componentPrefs = getUserPreferences( aNamespace );
           SwingComponentUtils.saveWindowState( componentPrefs, aComponent );
@@ -348,7 +339,7 @@ public class UserSessionManager
       }
       catch ( RuntimeException exception )
       {
-        this.logger.log( LogService.LOG_WARNING, "Writing dialog properties failed!", exception );
+        LOG.log(Level.WARNING, "Writing dialog properties failed!", exception );
       }
       finally
       {
@@ -376,12 +367,12 @@ public class UserSessionManager
   private static final String IMPLICIT_USER_SETTING_NAME_SUFFIX = "settings";
 
   // VARIABLES
+  private static final Logger LOG = Logger.getLogger( UserSessionManager.class.getName() );
 
   // All volatiles below are injected by Felix DM...
   private volatile DependencyManager dependencyManager;
   private volatile ProjectManager projectManager;
   private volatile UserSettingsManager userSettingsManager;
-  private volatile LogService log;
 
   private Component windowStateComponent;
 
@@ -446,7 +437,7 @@ public class UserSessionManager
     {
       this.userSettingsManager.loadUserSettings( userSettingsFile, currentProject );
 
-      this.log.log( LogService.LOG_DEBUG, "User settings restored ..." );
+      LOG.fine(  "User settings restored ..." );
     }
     finally
     {
@@ -467,7 +458,7 @@ public class UserSessionManager
         final File userSettingsFile = getUserSettingsFile();
         this.userSettingsManager.saveUserSettings( userSettingsFile, currentProject );
 
-        this.log.log( LogService.LOG_DEBUG, "User settings stored ..." );
+        LOG.fine( "User settings stored ..." );
       }
       finally
       {

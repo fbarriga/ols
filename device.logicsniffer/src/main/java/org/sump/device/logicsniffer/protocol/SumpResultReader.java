@@ -1,5 +1,5 @@
 /*
- * OpenBench LogicSniffer / SUMP project 
+ * OpenBench LogicSniffer / SUMP project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
  *
  * Copyright (C) 2006-2010 Michael Poppitz, www.sump.org
  * Copyright (C) 2010 J.W. Janssen, www.lxtreme.nl
+ * Copyright (C) 2024 - Felipe Barriga Richards, http://github.com/fbarriga/ols
  */
 package org.sump.device.logicsniffer.protocol;
 
@@ -24,6 +25,7 @@ package org.sump.device.logicsniffer.protocol;
 import java.io.*;
 import java.util.logging.*;
 
+import com.fazecast.jSerialComm.SerialPortTimeoutException;
 import nl.lxtreme.ols.util.*;
 
 import org.sump.device.logicsniffer.*;
@@ -46,7 +48,7 @@ public class SumpResultReader implements Closeable, SumpProtocolConstants
 
   /**
    * Creates a new {@link SumpResultReader} instance.
-   * 
+   *
    * @param aInputStream
    *          the {@link DataInputStream} to read from, cannot be
    *          <code>null</code>.
@@ -106,7 +108,7 @@ public class SumpResultReader implements Closeable, SumpProtocolConstants
 
   /**
    * Tries to obtain the OLS device's metadata.
-   * 
+   *
    * @return the device metadata, can be not populated, but never
    *         <code>null</code>.
    * @throws IOException
@@ -176,20 +178,25 @@ public class SumpResultReader implements Closeable, SumpProtocolConstants
 
   /**
    * Reads raw data from the contained input stream.
-   * 
-   * @return the integer sample value containing up to four read bytes, not
+   *
+   * @return number of bytes received. Returns 0 if no data was received (timeout).
+   * the integer sample value containing up to four read bytes, not
    *         aligned.
    * @throws IOException
    *           if stream reading fails.
    */
   public int readRawData( byte[] aBuffer, int aOffset, int aCount ) throws IOException
   {
-    return this.inputStream.read( aBuffer, aOffset, aCount );
+    try {
+      return this.inputStream.read(aBuffer, aOffset, aCount);
+    } catch (SerialPortTimeoutException e) {
+      return 0;
+    }
   }
 
   /**
    * Reads a zero-terminated ASCII-string from the current input stream.
-   * 
+   *
    * @return the read string, can be empty but never <code>null</code>.
    * @throws IOException
    *           in case of I/O problems during the string read.
