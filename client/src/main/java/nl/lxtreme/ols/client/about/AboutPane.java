@@ -46,6 +46,7 @@ final class AboutPane extends JPanel
       + "\u00A9 Copyright 2024 Felipe Barriga Richards<br><br></p>" //
       + "<p>This software is released under the GNU GPLv2 license.<br><br></p>" //
       + "<p>Version: %s<br><br></p>" //
+      + "<p>JVM: %s<br><br></p>" //
       + "<p>For more information see:</p>" //
       + "<ul>" //
       + "<li><a href='https://github.com/fbarriga/ols'>https://github.com/fbarriga/ols</a>;</li>" //
@@ -73,10 +74,10 @@ final class AboutPane extends JPanel
    * 
    * @return a new {@link AboutPane} instance, never <code>null</code>.
    */
-  public static AboutPane create( final String aName, final String aVersion )
+  public static AboutPane create( final String aName, final String aVersion, final String aJvmVersion )
   {
     AboutPane result = new AboutPane();
-    result.buildPanel( aName, aVersion );
+    result.buildPanel( aName, aVersion, aJvmVersion );
     return result;
   }
 
@@ -87,8 +88,10 @@ final class AboutPane extends JPanel
    *          the name to display;
    * @param aVersion
    *          the version to display.
+   * @param aJvmVersion
+   *          the JVM version to display.
    */
-  void buildPanel( final String aName, final String aVersion )
+  void buildPanel( final String aName, final String aVersion, final String aJvmVersion )
   {
     setBorder( BorderFactory.createEmptyBorder( 5, 5, 5, 5 ) );
 
@@ -96,7 +99,7 @@ final class AboutPane extends JPanel
     final JLabel iconLabel = new JLabel( new ImageIcon( url ) );
     iconLabel.setBackground( Color.WHITE );
 
-    final JLabel aboutMsg = new JLabel( String.format( ABOUT_MESSAGE, aName, aVersion ) );
+    final JLabel aboutMsg = new JLabel( String.format( ABOUT_MESSAGE, aName, aVersion, aJvmVersion ) );
 
     add( iconLabel, //
         new GridBagConstraints( 0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, //
