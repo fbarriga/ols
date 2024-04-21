@@ -22,7 +22,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<ols.version>0.9.8-SNAPSHOT</ols.version>
+		<ols.version>0.9.8</ols.version>
 	</properties>
 	<prerequisites>
 		<maven>3.13.0</maven>
